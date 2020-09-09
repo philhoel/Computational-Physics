@@ -9,13 +9,6 @@
 using namespace std;
 using namespace arma;
 
-/*
-    [b1 c1 0 0 ...] [x1]     [q1]
-    [a1 b2 c2 0 ..] [x2]  =  [q2]
-    [0 a2 b3 c3 ..] [x3]     [q3]
-*/
-
-
 
 class LinSys {
 
@@ -125,10 +118,8 @@ class LinSys {
             }
         }
 
-        // Add vector to store values
-        // Separate function into two functions
-        // One for calulating and one for writing to file
-        void error_analysis() {
+
+        double error_analysis() {
 
             double epsilon;
             double max = 0;
@@ -143,14 +134,7 @@ class LinSys {
 
             cout << epsilon << endl;
 
-            ofstream error_file;
-            error_file.open("Error_analysis.txt");
-            error_file << "n = ";
-            error_file << n;
-            error_file << " : epsi = ";
-            error_file << epsilon << "\n";
-
-            error_file.close();
+            return epsilon;
         }
 
         void write_to_file(string filename) {
@@ -191,18 +175,46 @@ class LinSys {
 };
 
 
+void error_to_file(vector<double> vec) {
+
+        int x = 10;
+
+        ofstream error_file;
+        error_file.open("Error_analysis.txt");
+        for (auto y : vec) {
+            error_file << "n = ";
+            error_file << x;
+            error_file << " : Error = ";
+            error_file << y << endl;
+            x *= 10;
+        }
+
+        error_file.close();
+    }
+
 
 int main() {
 
+    vector<double> epsi;
+
     clock_t start, finish;
+    double LS10_LU;
+    double LS10_general;
 
     LinSys LS10(10);
+    LinSys LS100(100);
     LinSys LS1k(1000);
+    LinSys LS10k(10000);
+    LinSys LS100k(100000);
     LinSys LS1M(1000000);
+    LinSys LS10M(10000000);
 
+    start = clock();
     LS10.general_algorithm();
+    finish = clock();
+    LS10_general = (double)(finish - start)/(CLOCKS_PER_SEC);
     LS10.write_to_file("general_10.txt");
-    LS10.error_analysis();
+    epsi.push_back(LS10.error_analysis());
 
     LS10.reset();
     LS10.special_algorithm();
@@ -210,9 +222,19 @@ int main() {
 
     LS10.write_analytic("analytic_10.txt");
 
+    LS100.general_algorithm();
+    LS100.write_to_file("general_100.txt");
+    epsi.push_back(LS100.error_analysis());
+    
+    LS100.reset();
+    LS100.special_algorithm();
+    LS100.write_to_file("special_100.txt");
+
+    LS100.write_analytic("analytic_100.txt");
+
     LS1k.general_algorithm();
     LS1k.write_to_file("general_1k.txt");
-    LS1k.error_analysis();
+    epsi.push_back(LS1k.error_analysis());
     
     LS1k.reset();
     LS1k.special_algorithm();
@@ -220,15 +242,28 @@ int main() {
 
     LS1k.write_analytic("analytic_1k.txt");
 
-    LS1M.general_algorithm();
-    LS1M.write_to_file("general_1M.txt");
-    LS1M.error_analysis();
+    LS10k.general_algorithm();
+    LS10k.error_analysis();
 
-    LS1M.reset();
-    LS1M.special_algorithm();
-    LS1M.write_to_file("special_1M.txt");
-    
-    LS1M.write_analytic("analytic_1M.txt");
+    LS100k.general_algorithm();
+    LS100k.error_analysis();
+
+    LS1M.general_algorithm();
+    epsi.push_back(LS1M.error_analysis());
+
+    LS10M.general_algorithm();
+    epsi.push_back(LS10M.error_analysis());
+
+    error_to_file(epsi);
+
+    start = clock();
+    LS10.LU_decomp();
+    finish = clock();
+    LS10_LU = (double)(finish - start)/(CLOCKS_PER_SEC);
+
+
+    cout << "runtime General algo for n = 10: " << LS10_general << endl;
+    cout << "runtime LU for n = 10: " << LS10_LU << endl;
 
     return 0;
 }
