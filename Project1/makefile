@@ -5,4 +5,6 @@ compile:
 
 execute:
 	./p
-	python3 read_plot.py general_10.txt general_1k.txt general_1M.txt
+	python3 read_plot.py general_10.txt special_10.txt analytic_10.txt
+	python3 read_plot.py general_1k.txt special_1k.txt analytic_1k.txt
+	python3 read_plot.py general_1M.txt special_1M.txt analytic_1M.txt

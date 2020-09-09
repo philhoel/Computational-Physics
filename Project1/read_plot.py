@@ -20,16 +20,20 @@ def read_file(filename):
     return y, h, n
 
 y_first, h, n = read_file(first)
-x_first = np.linspace(h, 1 - h, n)
+x = np.linspace(h, 1 - h, n)
+
 y_second, h, n = read_file(second)
-x_second = np.linspace(h, 1 - h, n)
+
 y_third, h, n = read_file(third)
-x_third = np.linspace(h, 1 - h, n)
 
 
-plt.plot(x_first, y_first)
-plt.show()
-plt.plot(x_second, y_second)
-plt.show()
-plt.plot(x_third, y_third)
+
+plt.plot(x, y_first, label="General")
+plt.plot(x, y_second, label="Special")
+plt.plot(x, y_third, label="Analytic")
+plt.legend()
+plt.title(f"Numerical and analytic plot for n = {n}")
+plt.xlabel("x")
+plt.ylabel("u(x)")
+plt.savefig(f"plot_n_{n}.jpg")
 plt.show()
