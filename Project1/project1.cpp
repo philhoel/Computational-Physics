@@ -200,6 +200,8 @@ int main() {
     clock_t start, finish;
     double LS10_LU;
     double LS10_general;
+    double LS10k_LU;
+    double LS10k_general;
 
     LinSys LS10(10);
     LinSys LS100(100);
@@ -242,11 +244,14 @@ int main() {
 
     LS1k.write_analytic("analytic_1k.txt");
 
+    start = clock();
     LS10k.general_algorithm();
-    LS10k.error_analysis();
+    finish = clock();
+    LS10k_general = (double) (finish - start)/(CLOCKS_PER_SEC);
+    epsi.push_back(LS10k.error_analysis());
 
     LS100k.general_algorithm();
-    LS100k.error_analysis();
+    epsi.push_back(LS100k.error_analysis());
 
     LS1M.general_algorithm();
     epsi.push_back(LS1M.error_analysis());
@@ -261,9 +266,16 @@ int main() {
     finish = clock();
     LS10_LU = (double)(finish - start)/(CLOCKS_PER_SEC);
 
+    start = clock();
+    LS10k.LU_decomp();
+    finish = clock();
+    LS10k_LU = (double)(finish - start)/(CLOCKS_PER_SEC);
+
 
     cout << "runtime General algo for n = 10: " << LS10_general << endl;
     cout << "runtime LU for n = 10: " << LS10_LU << endl;
+    cout << "runtime General algo for n = 10^4: " << LS10k_general << endl;
+    cout << "runtime LU for n = 10^4: " << LS10k_LU << endl;
 
     return 0;
 }

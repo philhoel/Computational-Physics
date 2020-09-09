@@ -1,7 +1,7 @@
 all: compile execute
 
 compile:
-	g++ project1.cpp -o p -larmadillo -llapack -lblas
+	g++ -std=c++11 project1.cpp -o p -larmadillo -llapack -lblas
 
 execute:
 	./p
