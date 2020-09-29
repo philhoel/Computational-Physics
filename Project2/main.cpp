@@ -1,7 +1,5 @@
 #include <cstdlib>
-#include <vector>
 #include <fstream>
-#include <string>
 #include <cmath>
 #include <iostream>
 #include "time.h"
@@ -13,15 +11,32 @@ using namespace arma;
 
 int main() {
 
-    LinSys test_obj(100);
-    LinSys test_obj2(100, 5);
-
-    //test_obj.iterations(100);
-    //test_obj.extract_eigenvalues();
-    //test_obj.print_eigenvalues();
-
-    test_obj2.iterations(100);
-    test_obj2.extract_eigenvalues();
-    test_obj2.print_eigenvalues();
+    LinSys test_obj(10);
+    //LinSys test_obj2(300, 5);
     
+    vec eigval;
+    mat eigvec;
+
+    //eig_sym(eigval, eigvec, test_obj.A);
+
+    /*
+
+    ofstream new_file;
+    new_file.open("this_file.txt");
+    for (int i = 0; i < 300; i++) {
+        new_file << eigvec[i] << endl;
+    }
+    new_file.close();
+
+    */
+
+   test_obj.iterations();
+   test_obj.extract_eigenvalues();
+   test_obj.sort_eig();
+   test_obj.pretty_print();
+
+
+
+
+    return 0;
 }

@@ -1,7 +1,5 @@
 #include <cstdlib>
-#include <vector>
 #include <fstream>
-#include <string>
 #include <cmath>
 #include <iostream>
 #include "time.h"
@@ -28,17 +26,32 @@ using namespace arma;
         A(0,0) = 2/hh;
     }
 
+    /*
+    Fills the matrix specificly for the quantum mechanics problem
+    */
     void LinSys::fillMatrix_2() {
 
         for ( int i = 1; i < N; i++ ) {
 
-            A(i,i) = 2/hh + pow(rho[i], 2);
+            A(i,i) = 2/hh + pow(rho[i+1], 2);
             A(i, i-1) = -1/hh;
             A(i-1, i) = -1/hh;
         }
 
-        A(0,0) = 2/hh + pow(rho[0], 2);
+        A(0,0) = 2/hh + pow(rho[1], 2);
 
+    }
+
+    void LinSys::fillMatrix_3() {
+
+    }
+
+    // Fills R matrix with 1's down the diagonal
+    void LinSys::fillR() {
+
+        for (int i = 0; i < N; i++) {
+            R(i,i) = 1;
+        }
     }
 
     /*
@@ -56,37 +69,51 @@ using namespace arma;
         tol = 1.0E-10;
         iter = 0;
         N = n;
-        h = 1./N;
-        hh = pow(h,2);
         maxiter = 1E6;
         maxnondiag = 1;
+
+        int rho_max = 1;
 
         A = zeros<mat> (n, n);
         R = zeros<mat> (n, n);
         eig = zeros<vec> (n, 1);
+        //anaEig = zeros<vec> (n,1);
+
+        rho = linspace(0, rho_max, N+2);
+        h = (double) rho_max/(N+1);
+        hh = h*h;
 
         fillMatrix_1();
+        fillR();
 
     }
 
     // Second contructor
+    // Used for the quantum mechanics problem
     LinSys::LinSys( int n, int rho_max ) {
 
         tol = 1.0E-10;
         iter = 0;
         N = n;
-        h = 1./N;
-        hh = pow(h,2);
         maxiter = 1E6;
         maxnondiag = 1;
 
         A = zeros<mat> (n, n);
         R = zeros<mat> (n, n);
         eig = zeros<vec> (n, 1);
+        //anaEig = zeros<vec> (n,1);
 
-        rho = linspace(0, rho_max, N);
+        rho = linspace(0, rho_max, N+2);
+        h = (double) rho_max/(N+1);
+        hh = h*h;
+        
 
         fillMatrix_2();
+        fillR();
+
+    }
+
+    LinSys::LinSys( int n, int rho_max, double omega ) {
 
     }
 
@@ -114,8 +141,6 @@ using namespace arma;
         }
 
         maxnondiag = max;
-
-        //cout << maxnondiag << endl;
     }
 
     /*
@@ -128,9 +153,9 @@ using namespace arma;
         if ( A(p,q) != 0.0 ) {
 
             double t, tau;
-            tau = (A(p, q) - A(p,p))/(2*A(p,q));
+            tau = (A(q,q) - A(p,p))/(2*A(p,q));
 
-            if ( tau >= 0 ) {
+            if ( tau > 0 ) {
 
                 t = 1.0/( tau + sqrt( 1.0 + tau*tau ) );
 
@@ -139,8 +164,6 @@ using namespace arma;
                 t = -1.0/( -tau + sqrt( 1.0 + tau*tau ) );
 
             }
-
-            //cout << t << endl;
 
             c = 1/sqrt( 1 + t*t );
             s = c*t;
@@ -163,6 +186,11 @@ using namespace arma;
         A(p,q) = 0.0;
         A(q,p) = 0.0;
 
+        R(p,p) = c;
+        R(q,q) = c;
+        R(p,q) = s;
+        R(q,p) = -s;
+
         for ( int i = 0; i < n; i++ ) {
 
             if ( ( i != p ) && ( i != q ) ) {
@@ -182,30 +210,31 @@ using namespace arma;
 
             R(i,p) = c*r_ip - s*r_iq;
             R(i,q) = c*r_iq + s*r_ip;
+
         }
+
     }
 
     /*
     Completes the Jacobi method. Runs offdiag() and jacobi_rotate()
     until the biggest non-diagonal number is lower than the tolerance.
     */
-    void LinSys::iterations(int n) {
+    void LinSys::iterations() {
 
         while ( ( maxnondiag > tol ) && ( iter <= maxiter ) ) {
-            
-            offdiag(n);
-            jacobi_rotate(n);
+        
+            offdiag(N);
+            jacobi_rotate(N);
             iter++;
         }
+
+        cout << "Number of iterations: " << iter << endl;
     }
 
     // Prints the matrix A
     void LinSys::print_matrix() {
-
         cout << A << endl;
-
     }
-
 
     double LinSys::get_maxnondiag() {
         return maxnondiag;
@@ -218,6 +247,11 @@ using namespace arma;
         }
     }
 
+    // Might remove ?
+    void LinSys::print_eigenvectors() {
+        cout << R << endl;
+    }
+
     void LinSys::print_eigenvalues() {
 
         for (auto e: eig) {
@@ -225,6 +259,44 @@ using namespace arma;
         }
     }
 
-    void write_eig_to_file(string filename) {
+    void LinSys::write_eig_to_file(string filename) {
+
+        ofstream my_file;
+        my_file.open(filename);
+        for (auto e : eig) {
+            my_file << e << endl;
+        }
+
+        my_file.close();
 
     }
+
+    void LinSys::sort_eig() {
+        vec new_eig;
+        new_eig = sort(eig);
+
+        eig = new_eig;
+    }
+
+    void LinSys::pretty_print() {
+        for (int i = 0; i < 5; i++) {
+            cout << "Lambda = ";
+            cout << eig[i] << endl;
+        }
+    }
+
+    /*
+    void LinSys::analyticEig() {
+
+        for (int j = 0; j < N; j++) {
+            anaEig[j] = (2/hh) + 2*(-1/hh)*cos(j*PI/N);
+        }
+    }
+
+    void LinSys::print_anaEig() {
+        for (auto e : anaEig) {
+            cout << e << endl;
+        } 
+    }
+
+*/

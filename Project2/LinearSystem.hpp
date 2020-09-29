@@ -1,7 +1,5 @@
 #include <cstdlib>
-#include <vector>
 #include <fstream>
-#include <string>
 #include <cmath>
 #include <iostream>
 #include "time.h"
@@ -25,7 +23,7 @@ class LinSys {
         int p;
         int q;
 
-        mat A;
+        
         mat R;
         vec rho;
         vec eig;
@@ -35,18 +33,28 @@ class LinSys {
 
         void fillMatrix_2();
 
+        void fillMatrix_3();
+
+        void fillR();
+
 
     public:
+
+        const double PI = 3.1415926535897932;
+
+        mat A;
 
         LinSys( int n );
 
         LinSys( int n, int rho_max );
 
+        LinSys( int n, int rho_max, double omega );
+
         void offdiag( int n );
 
         void jacobi_rotate( int n );
 
-        void iterations( int n );
+        void iterations();
 
         void print_matrix();
 
@@ -54,8 +62,18 @@ class LinSys {
 
         void extract_eigenvalues();
 
+        void print_eigenvectors();
+
         void print_eigenvalues();
 
         void write_eig_to_file(string filename);
+
+        void sort_eig();
+
+        void pretty_print();
+
+        void analyticEig();
+
+        void print_anaEig();
 
 };

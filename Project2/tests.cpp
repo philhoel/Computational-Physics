@@ -24,6 +24,8 @@ void test_maxnondiag() {
 
     computed_max = test_obj.get_maxnondiag();
 
+    cout << computed_max << endl;
+
     assert (abs(expected_max - computed_max) < tolerance);
 }
 
