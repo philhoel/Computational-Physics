@@ -168,14 +168,45 @@ int main() {
   */
 
   /*
+  
   //Testing multiple rho (very slow)
   //----------------------------------------------------------------//
   
+
   for (double i = 4; i <= 6; i += 0.5) {
+      
       multiple_rho(i);
   }
 
   //-----------------------------------------------------------------//
+  
+  */
+  
+  /*
+  //Testing runtime
+  //--------------------------------------------------------------//
+  
+    LinSys new_obj1(100,5);
+    LinSys new_obj2(200,5);
+    LinSys new_obj3(300,5);
+
+    clock_t start1, start2, start3, finish1, finish2, finish3;
+
+    start1 = clock();
+    new_obj1.iterations();
+    finish1 = clock();
+    start2 = clock();
+    new_obj2.iterations();
+    finish2 = clock();
+    start3 = clock();
+    new_obj3.iterations();
+    finish3 = clock();
+
+    cout << "Time: " << (double) (finish1 - start1)/(CLOCKS_PER_SEC) << " | N = 100" << endl;
+    cout << "Time: " << (double) (finish2 - start2)/(CLOCKS_PER_SEC) << " | N = 200" << endl;
+    cout << "Time: " << (double) (finish3 - start3)/(CLOCKS_PER_SEC) << " | N = 300" << endl;
+  
+  //------------------------------------------------------------//
   */
   
 
