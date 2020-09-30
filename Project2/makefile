@@ -1,9 +1,9 @@
 all: compile execute
 
 compile:
-	g++ -std=c++11 main.cpp LinearSystem.cpp -o p -larmadillo -llapack -lblas
+	g++ -std=c++11 main.cpp LinearSystem.cpp tests.cpp -o p -larmadillo -llapack -lblas
+	g++ tests.cpp LinearSystem.cpp -o t -larmadillo -llapack -lblas
 
 execute:
+	./t
 	./p
-	python3 python_plot.py this_file.txt 1
-	python3 python_plot.py this_file2.txt 5

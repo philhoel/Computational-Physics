@@ -10,6 +10,10 @@
 using namespace std;
 using namespace arma;
 
+// ----------------------- Class ---------------------------------------- //
+
+    // --------------------- Private fill methods --------------------------- //
+
     /*
     Fills the matrix with 2's down the diagonal
     and -1's one line above and under the diagonal
@@ -44,6 +48,16 @@ using namespace arma;
 
     void LinSys::fillMatrix_3() {
 
+        for ( int i = 1; i < N; i++ ) {
+
+            A(i,i) = 2/hh + pow(omega_r,2)*pow(rho[i+1], 2) + (1/rho[i+1]);
+            A(i, i-1) = -1/hh;
+            A(i-1, i) = -1/hh;
+
+        }
+
+        A(0,0) = 2/hh + pow(omega_r,2)*pow(rho[1], 2) + (1/rho[1]);
+
     }
 
     // Fills R matrix with 1's down the diagonal
@@ -53,6 +67,8 @@ using namespace arma;
             R(i,i) = 1;
         }
     }
+
+    // --------------------------------- Constructor methods ------------------------ //
 
     /*
     Constructor for LinSys class
@@ -77,7 +93,7 @@ using namespace arma;
         A = zeros<mat> (n, n);
         R = zeros<mat> (n, n);
         eig = zeros<vec> (n, 1);
-        //anaEig = zeros<vec> (n,1);
+        anaEig = zeros<vec> (n,1);
 
         rho = linspace(0, rho_max, N+2);
         h = (double) rho_max/(N+1);
@@ -90,7 +106,7 @@ using namespace arma;
 
     // Second contructor
     // Used for the quantum mechanics problem
-    LinSys::LinSys( int n, int rho_max ) {
+    LinSys::LinSys( int n, double rho_max ) {
 
         tol = 1.0E-10;
         iter = 0;
@@ -101,7 +117,7 @@ using namespace arma;
         A = zeros<mat> (n, n);
         R = zeros<mat> (n, n);
         eig = zeros<vec> (n, 1);
-        //anaEig = zeros<vec> (n,1);
+        anaEig = zeros<vec> (n,1);
 
         rho = linspace(0, rho_max, N+2);
         h = (double) rho_max/(N+1);
@@ -113,9 +129,31 @@ using namespace arma;
 
     }
 
-    LinSys::LinSys( int n, int rho_max, double omega ) {
+    LinSys::LinSys( int n, double rho_max, double omega ) {
+
+        tol = 1.0E-10;
+        iter = 0;
+        N = n;
+        maxiter = 1E6;
+        maxnondiag = 1;
+        omega_r = omega;
+
+        A = zeros<mat> (n, n);
+        R = zeros<mat> (n, n);
+        eig = zeros<vec> (n, 1);
+        anaEig = zeros<vec> (n,1);
+
+        rho = linspace(0, rho_max, N+2);
+        h = (double) rho_max/(N+1);
+        hh = h*h;
+        
+
+        fillMatrix_3();
+        fillR();
 
     }
+
+    // ------------------------ Jacobi method -------------------------------------- //
 
     /*
     Finds the biggest non-diagonal number in the matrix.
@@ -231,6 +269,8 @@ using namespace arma;
         cout << "Number of iterations: " << iter << endl;
     }
 
+    // ----------------------------- Extra member functions --------------------------- //
+
     // Prints the matrix A
     void LinSys::print_matrix() {
         cout << A << endl;
@@ -245,11 +285,6 @@ using namespace arma;
         for (int i = 0; i < N; i++) {
             eig[i] = A(i,i);
         }
-    }
-
-    // Might remove ?
-    void LinSys::print_eigenvectors() {
-        cout << R << endl;
     }
 
     void LinSys::print_eigenvalues() {
@@ -285,11 +320,11 @@ using namespace arma;
         }
     }
 
-    /*
+    
     void LinSys::analyticEig() {
 
-        for (int j = 0; j < N; j++) {
-            anaEig[j] = (2/hh) + 2*(-1/hh)*cos(j*PI/N);
+        for (int j = 0; j < 5; j++) {
+            anaEig[j] = (2/hh) + 2*(-1/hh)*cos((j+1)*PI/N);
         }
     }
 
@@ -299,4 +334,3 @@ using namespace arma;
         } 
     }
 
-*/

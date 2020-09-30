@@ -19,6 +19,7 @@ class LinSys {
         double hh;
         double maxnondiag;
         int maxiter;
+        double omega_r;
 
         int p;
         int q;
@@ -26,7 +27,7 @@ class LinSys {
         
         mat R;
         vec rho;
-        vec eig;
+        vec anaEig;
 
     
         void fillMatrix_1();
@@ -40,15 +41,17 @@ class LinSys {
 
     public:
 
-        const double PI = 3.1415926535897932;
+        const double PI = 3.1415926535897;
 
         mat A;
 
+        vec eig;
+
         LinSys( int n );
 
-        LinSys( int n, int rho_max );
+        LinSys( int n, double rho_max );
 
-        LinSys( int n, int rho_max, double omega );
+        LinSys( int n, double rho_max, double omega );
 
         void offdiag( int n );
 
