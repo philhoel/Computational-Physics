@@ -8,12 +8,23 @@
 using namespace std;
 using namespace arma;
 
+/*
+##########################################################
+##########################################################
+
+SolarSystem class
+
+##########################################################
+##########################################################
+*/
+
 SolarSystem::SolarSystem(int N) {
     n = N;
     h = 1/n;
     G = 4*PI*PI;
     planetsArray = new Planets[n];
 }
+
 
 SolarSystem::force_function(int i) {
     
