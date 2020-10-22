@@ -72,12 +72,24 @@ void SolarSystem::setR_j(double x, double y) {
 double SolarSystem::force_function(int j, int i, int x) {
     
     vec sum = zeros<vec> (2);
+    double zum_x = 0;
+    double zum_y = 0;
     for (int k = 0; k < size; k++) {
-        if (k != j) {
-            setR_j(planetsArray[j].pos(0,i), planetsArray[j].pos(1,i));
+        if (size == 1) {
+            //cout << "hei" << endl;
+            double r_ii = sqrt(pow(r_i[0] - r_j[0], 3) + pow(r_i[1] - r_j[1], 3));
+            zum_x += ((-G*planetsArray[k].getMass())/r_ii)*r_i[0];
+            zum_x += ((-G*planetsArray[k].getMass())/r_ii)*r_i[1];
+        } else {
+            cout << j << endl;
+            setR_j(planetsArray[k].pos(0,i), planetsArray[k].pos(1,i));
             sum += ((-G*planetsArray[k].getMass())/pow(abs(r_i - r_j), 2))*(r_i - r_j);
+            cout << r_i << endl;
         }
     }
+
+    sum[0] = zum_x;
+    sum[1] = zum_y;
 
     return sum[x];
 }
@@ -93,7 +105,7 @@ void SolarSystem::euler() {
         // j = planets
         for (int j = 0; j < size; j++) {
 
-            setR_i(planetsArray[j].pos(0,i), planetsArray[j].pos(0,i));
+            setR_i(planetsArray[j].pos(0,i), planetsArray[j].pos(1,i));
 
             // Acceleration
             planetsArray[j].acc(0,i+1) = force_function(j, i, 0);
@@ -104,6 +116,7 @@ void SolarSystem::euler() {
             planetsArray[j].vel(1,i+1) = planetsArray[j].vel(1,i) + planetsArray[j].acc(1,i)*h;
 
             // Posisition
+            //cout << planetsArray[j].pos(0,i) << endl;
             planetsArray[j].pos(0,i+1) = planetsArray[j].pos(0,i) + planetsArray[j].vel(0,i)*h;
             planetsArray[j].pos(1,i+1) = planetsArray[j].pos(1,i) + planetsArray[j].vel(1,i)*h;
         }
@@ -120,15 +133,15 @@ void SolarSystem::writeValuesToFile(string filename) {
 
         for (int j = 0; j < n-1; j++) {
             my_file << planetsArray[i].pos(0,j) << " " << planetsArray[i].pos(1,j);
-            cout << planetsArray[i].pos(0,j) << " " << planetsArray[i].pos(1,j);
+            //cout << planetsArray[i].pos(0,j) << " " << planetsArray[i].pos(1,j);
             my_file << " ";
-            cout << " ";
+            //cout << " ";
             my_file << planetsArray[i].vel(0,j) << " " << planetsArray[i].vel(1,j);
-            cout << planetsArray[i].vel(0,j) << " " << planetsArray[i].vel(1,j);
+            //cout << planetsArray[i].vel(0,j) << " " << planetsArray[i].vel(1,j);
             my_file << " ";
-            cout << " ";
+            //cout << " ";
             my_file << planetsArray[i].acc(0,j) << " " << planetsArray[i].acc(1,j) << endl;
-            cout << planetsArray[i].acc(0,j) << " " << planetsArray[i].acc(1,j) << endl;
+            //cout << planetsArray[i].acc(0,j) << " " << planetsArray[i].acc(1,j) << endl;
         }
     }
 
@@ -144,6 +157,7 @@ void SolarSystem::writePlotInfo(string filename) {
     my_file << h << endl;
     for (int i = 0; i < size; i++) {
         my_file << planetsArray[i].getID() << " " << planetsArray[i].getName() << endl;
+        my_file << "-" << endl;
     }
 
     my_file.close();

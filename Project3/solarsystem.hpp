@@ -57,8 +57,8 @@ class SolarSystem {
         int size;
 
         vector<Planet> planetsArray;
-        vec r_i;
-        vec r_j;
+        vec r_i = zeros<vec> (2);
+        vec r_j = zeros<vec> (2);
 
     public:
 
