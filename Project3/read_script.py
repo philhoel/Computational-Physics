@@ -53,15 +53,17 @@ class ReadFile:
 
 
     def plot(self):
-        for planet in planets:
+        for planet in self.planets:
             plt.plot(planet.pos[:,0], planet.pos[:,1])
         
+        plt.savefig("planets.png")
         plt.show()
 
 
-if _name__ == "__main__":
+if __name__ == "__main__":
 
     test_obj = ReadFile()
     test_obj.read_info("plot_info.txt")
-    test_obj.read_values()
+    test_obj.read_values("values.txt")
     test_obj.plot()
+    plt.show()

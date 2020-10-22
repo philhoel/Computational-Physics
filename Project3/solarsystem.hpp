@@ -34,6 +34,8 @@ class Planet {
 
         Planet(string Name, int id, int N);
 
+        void addInitialValues(double x, double y, double vx, double vy);
+
         double getMass();
 
         string getName();
@@ -62,7 +64,7 @@ class SolarSystem {
 
         SolarSystem(int N, int size);
 
-        void addPlanet(string name, int id);
+        void addPlanet(string name, int id, vec initial);
 
         void setR_i(double x, double y);
 
@@ -77,4 +79,6 @@ class SolarSystem {
         void writeValuesToFile(string filename);
 
         void writePlotInfo(string filename);
+
+        double getPI();
 };
