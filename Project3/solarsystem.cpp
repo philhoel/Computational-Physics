@@ -77,20 +77,24 @@ double SolarSystem::force_function(int j, int i, int x) {
     double zum_y = 0;
     for (int k = 0; k < size; k++) {
         if (size == 1) {
-            //cout << "hei" << endl;
+            cout << "hei" << endl;
             double r_ii = sqrt(pow(r_i[0] - r_j[0], 3) + pow(r_i[1] - r_j[1], 3));
             zum_x += ((-G*planetsArray[k].getMass())/r_ii)*r_i[0];
             zum_x += ((-G*planetsArray[k].getMass())/r_ii)*r_i[1];
         } else if (k != j) {
-            cout << j << endl;
+            //cout << "hei" << endl;
+            //cout << j << endl;
             setR_j(planetsArray[k].pos(0,i), planetsArray[k].pos(1,i));
-            sum += ((-G*planetsArray[k].getMass())/pow(abs(r_i - r_j), 2))*(r_i - r_j);
-            cout << r_i << endl;
+            double r_ii = sqrt(pow(r_i[0] - r_j[0], 2) + pow(r_i[1] - r_j[1], 2));
+            sum += ((-G*planetsArray[k].getMass())/r_ii)*(r_i - r_j);
+            //cout << r_i << endl;
         }
     }
 
-    sum[0] = zum_x;
-    sum[1] = zum_y;
+    if (size == 1) {
+        sum[0] = zum_x;
+        sum[1] = zum_y;
+    }
 
     return sum[x];
 }
@@ -128,9 +132,10 @@ void SolarSystem::euler() {
 void SolarSystem::writeValuesToFile(string filename) {
     ofstream my_file;
     my_file.open(filename);
+    char a = 45;
     for (int i = 0; i < size; i++) {
 
-        my_file << "-" << endl;
+        my_file << a << endl;
 
         for (int j = 0; j < n-1; j++) {
             my_file << planetsArray[i].pos(0,j) << " " << planetsArray[i].pos(1,j);
@@ -152,6 +157,8 @@ void SolarSystem::writeValuesToFile(string filename) {
 
 void SolarSystem::writePlotInfo(string filename) {
 
+    char a = 45;
+
     ofstream my_file;
     my_file.open(filename);
     my_file << n << endl;
@@ -159,7 +166,7 @@ void SolarSystem::writePlotInfo(string filename) {
     for (int i = 0; i < size; i++) {
         my_file << planetsArray[i].getID() << endl;
         my_file << planetsArray[i].getName() << endl;
-        my_file << "-" << endl;
+        my_file << a << endl;
     }
 
     my_file.close();

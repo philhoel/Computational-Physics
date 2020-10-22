@@ -28,7 +28,8 @@ class ReadFile:
         with open(filename) as myFile:
             myFile.readline()
             for line in myFile:
-                if line != "-":
+                line = line.strip()
+                if line.strip() != str(chr(45)):
                     x, y, vx, vy, ax, ay = line.split()
                     self.planets[i].pos[j,0] = float(x)
                     self.planets[i].pos[j,1] = float(y)
@@ -39,6 +40,7 @@ class ReadFile:
                     j += 1
                 else:
                     i += 1
+                    j = 0
         
 
     def read_info(self, filename):

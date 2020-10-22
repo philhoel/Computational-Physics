@@ -8,7 +8,7 @@
 using namespace std;
 using namespace arma;
 
-// ------------------------ PLANET Class -----------------------------
+// ------------------------ Planet Class -----------------------------
 
 class Planet {
 
