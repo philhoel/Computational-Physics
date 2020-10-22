@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import os
 import sys
 
@@ -42,18 +43,27 @@ class ReadFile:
 
     def read_info(self, filename):
         
-        with open(filename) as myFile:
-            self.N = myFile.readline()
+            myFile = open(filename)
+            self.N = int(myFile.readline())
             self.step = myFile.readline()
 
-            for line in myFile:
-                print(line)
-                if line != "-":
-                    id, name = line.split()
-                else:
-                    self.planets.append(Planets(name, int(id), n))
+            lst = list()
 
-        print(self.planets)
+            r = myFile.read()
+            print(r)
+
+            for line in r.split():
+                #print(line)
+                
+                if line != "-":
+                    lst.append(line)
+                else:
+                    print(lst)
+                    self.planets.append(Planets(int(lst[0]), lst[1], self.N))
+                    lst.clear()
+
+            print(self.planets)
+            
 
 
     def plot(self):

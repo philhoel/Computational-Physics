@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
+#include <fstream>
 #include <armadillo>
 
 
@@ -80,7 +81,7 @@ double SolarSystem::force_function(int j, int i, int x) {
             double r_ii = sqrt(pow(r_i[0] - r_j[0], 3) + pow(r_i[1] - r_j[1], 3));
             zum_x += ((-G*planetsArray[k].getMass())/r_ii)*r_i[0];
             zum_x += ((-G*planetsArray[k].getMass())/r_ii)*r_i[1];
-        } else {
+        } else if (k != j) {
             cout << j << endl;
             setR_j(planetsArray[k].pos(0,i), planetsArray[k].pos(1,i));
             sum += ((-G*planetsArray[k].getMass())/pow(abs(r_i - r_j), 2))*(r_i - r_j);
@@ -156,7 +157,8 @@ void SolarSystem::writePlotInfo(string filename) {
     my_file << n << endl;
     my_file << h << endl;
     for (int i = 0; i < size; i++) {
-        my_file << planetsArray[i].getID() << " " << planetsArray[i].getName() << endl;
+        my_file << planetsArray[i].getID() << endl;
+        my_file << planetsArray[i].getName() << endl;
         my_file << "-" << endl;
     }
 
