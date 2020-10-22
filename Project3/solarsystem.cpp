@@ -77,8 +77,8 @@ double SolarSystem::force_function(int j, int i, int x) {
     double zum_y = 0;
     for (int k = 0; k < size; k++) {
         if (size == 1) {
-            cout << "hei" << endl;
-            double r_ii = sqrt(pow(r_i[0] - r_j[0], 3) + pow(r_i[1] - r_j[1], 3));
+            //cout << "hei" << endl;
+            double r_ii = sqrt(pow(r_i[0], 3) + pow(r_i[1], 3));
             zum_x += ((-G*planetsArray[k].getMass())/r_ii)*r_i[0];
             zum_x += ((-G*planetsArray[k].getMass())/r_ii)*r_i[1];
         } else if (k != j) {
@@ -101,6 +101,27 @@ double SolarSystem::force_function(int j, int i, int x) {
 
 void SolarSystem::verlet() {
 
+    // time
+    for (int i = 0; i < n-1; i++) {
+        // planets
+        for (int j = 0; j < size; j++) {
+
+            setR_i(planetsArray[j].pos(0,i+1), planetsArray[j].pos(1,i+1));
+
+            // Position
+            planetsArray[j].pos(0,i+1) = planetsArray[j].pos(0,i) + planetsArray[j].vel(0,i)*h + pow(h,2)*0.5*planetsArray[j].acc(0,i);
+            planetsArray[j].pos(0,i+1) = planetsArray[j].pos(1,i) + planetsArray[j].vel(1,i)*h + pow(h,2)*0.5*planetsArray[j].acc(1,i);
+
+            // Acceleration
+            planetsArray[j].acc(0,i+1) = force_function(j, i+1, 0);
+            planetsArray[j].acc(1,i+1) = force_function(j, i+1, 1);
+
+            // Velocity
+            planetsArray[j].vel(0,i+1) = planetsArray[j].vel(0,i) + h*(planetsArray[j].acc(0,i) + planetsArray[j].acc(0,i+1))/2;
+            planetsArray[j].vel(1,i+1) = planetsArray[j].vel(1,i) + h*(planetsArray[j].acc(1,i) + planetsArray[j].acc(1,i+1))/2;
+        }
+    }
+
 }
 
 void SolarSystem::euler() {
@@ -113,8 +134,8 @@ void SolarSystem::euler() {
             setR_i(planetsArray[j].pos(0,i), planetsArray[j].pos(1,i));
 
             // Acceleration
-            planetsArray[j].acc(0,i+1) = force_function(j, i, 0);
-            planetsArray[j].acc(1,i+1) = force_function(j, i, 1);
+            planetsArray[j].acc(0,i) = force_function(j, i, 0);
+            planetsArray[j].acc(1,i) = force_function(j, i, 1);
 
             // Velocity
             planetsArray[j].vel(0,i+1) = planetsArray[j].vel(0,i) + planetsArray[j].acc(0,i)*h;

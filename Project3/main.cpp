@@ -47,7 +47,7 @@ int main() {
     //test_obj.addPlanet("Mars", 4, Mars, 0.5);
     //test_obj.addPlanet("Jupiter", 5, Jupiter, 5);
     //test_obj.addPlanet("Venus", 6, Venus, 4);
-    test_obj.euler();
+    test_obj.verlet();
     test_obj.writePlotInfo("plot_info.txt");
     test_obj.writeValuesToFile("values.txt");
 }
