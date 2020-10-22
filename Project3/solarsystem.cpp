@@ -2,8 +2,10 @@
 #include <cmath>
 #include <cstdlib>
 #include <armadillo>
+
+
 #include "solarsystem.hpp"
-#include "planet.hpp"
+
 
 using namespace std;
 using namespace arma;
@@ -14,47 +16,71 @@ using namespace arma;
 
 SolarSystem class
 
+SolarSystem()
+addPlanet()
+setR_i()
+setR_j()
+force_function()
+verlet()
+euler()
+writeValuesToFile()
+writePlotInfo()
+
+Planet class
+
+getMass()
+getName()
+getID()
+
+
+
 ##########################################################
 ##########################################################
 */
 
-SolarSystem::SolarSystem(int N) {
+SolarSystem::SolarSystem(int N, int size) {
     n = N;
     size = 0;
     h = 1/n;
     G = 4*PI*PI;
-    planetsArray = new Planets[size];
     r_i = zeros<vec> (1, 2);
     r_j = zeros<vec> (1, 2);
 }
 
-SolarSystem::setR_i(double x, double y) {
+void SolarSystem::addPlanet(string name, int id) {
+    Planet new_obj(name, id, n);
+    planetsArray.push_back(new_obj);
+}
+
+void SolarSystem::setR_i(double x, double y) {
     r_i(0,0) = x;
     r_i(0,1) = y;
 }
 
-SolarSystem::setR_j(double x, double y) {
+void SolarSystem::setR_j(double x, double y) {
     r_j(0,0) = x;
     r_j(0,1) = y;
 }
 
 
-SolarSystem::force_function(int j, int i) {
+double SolarSystem::force_function(int j, int i, int x) {
     
-    double sum = 0;
+    vec sum = 0;
     for (int k = 0; k < n; k++) {
         if (k != j) {
             setR_j(planetsArray[j].pos(0,i), planetsArray[j].pos(0,i));
-            sum += ((-G*planetsArray[k].getMass())/pow(abs(r_i - r_j)), 2))*(r_i - r_j) //(r - r)
-        }    
+            sum += ((-G*planetsArray[k].getMass())/pow(abs(r_i - r_j), 2))*(r_i - r_j);
+        }
     }
+
+    return sum[x];
 }
 
-SolarSystem::verlet() {
+void SolarSystem::verlet() {
 
 }
 
-SolarSystem::euler() {
+void SolarSystem::euler() {
 
     // i = time
     for (int i = 0; i < n; i++) {
@@ -63,11 +89,9 @@ SolarSystem::euler() {
 
             setR_i(planetsArray[j].pos(0,i), planetsArray[j].pos(0,i));
 
-            force_function(i);
-
             // Acceleration
-            planetsArray[j].acc(0,i+1) = planetsArray[j].getForce();
-            planetsArray[j].acc(1,i+1) = planetsArray[j].getForce();
+            planetsArray[j].acc(0,i+1) = force_function(j, i, 0);
+            planetsArray[j].acc(1,i+1) = force_function(j, i, 1);
 
             // Velocity
             planetsArray[j].vel(0,i+1) = planetsArray[j].vel(0,i) + planetsArray[j].acc(0,i)*h;
@@ -81,7 +105,7 @@ SolarSystem::euler() {
 
 }
 
-SolarSystem::writeValuesToFile(string filename) {
+void SolarSystem::writeValuesToFile(string filename) {
     ofstream my_file;
     my_file.open(filename);
     for (int i = 0; i < size; i++) {
@@ -101,7 +125,7 @@ SolarSystem::writeValuesToFile(string filename) {
 
 }
 
-SolarSystem::writePlotInfo() {
+void SolarSystem::writePlotInfo(string filename) {
 
     ofstream my_file;
     my_file.open(filename);
@@ -111,4 +135,29 @@ SolarSystem::writePlotInfo() {
         my_file << planetsArray[i].getID() << " " << planetsArray[i].getName() << endl;
     }
 
+    my_file.close();
+
+}
+
+// ---------------------------- PLANET class -----------------------------------
+
+Planet::Planet(string Name, int id, int N) {
+    name = Name;
+    ID = id;
+    n = N;
+    pos = zeros<mat> (2, n);
+    vel = zeros<mat> (2, n);
+    acc = zeros<mat> (2, n);
+}
+
+double Planet::getMass() {
+    return mass;
+}
+
+string Planet::getName() {
+    return name;
+}
+
+int Planet::getID() {
+    return ID;
 }

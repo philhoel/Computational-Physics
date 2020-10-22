@@ -2,6 +2,45 @@
 #include <cmath>
 #include <cstdlib>
 #include <armadillo>
+#include <vector>
+
+
+using namespace std;
+using namespace arma;
+
+// ------------------------ PLANET Class -----------------------------
+
+class Planet {
+
+    private:
+
+        int n;
+
+        // ID - Planets number from the sun
+        int ID;
+
+        // Name of planet
+        string name;
+
+        // Mass of planet
+        double mass;
+        
+
+    public:
+
+        mat pos;
+        mat vel;
+        mat acc;
+
+        Planet(string Name, int id, int N);
+
+        double getMass();
+
+        string getName();
+
+        int getID();
+
+};
 
 
 class SolarSystem {
@@ -13,20 +52,23 @@ class SolarSystem {
         int n;
         double G;
         double h;
+        int size;
 
-        Planets[] planetsArray;
+        vector<Planet> planetsArray;
         vec r_i;
         vec r_j;
 
     public:
 
-        SolarSystem(int N);
+        SolarSystem(int N, int size);
+
+        void addPlanet(string name, int id);
 
         void setR_i(double x, double y);
 
         void setR_j(double x, double y);
 
-        void force_function(int i);
+        double force_function(int j, int i, int x);
 
         void verlet();
 
@@ -34,5 +76,5 @@ class SolarSystem {
 
         void writeValuesToFile(string filename);
 
-        void writePlotInfo();
+        void writePlotInfo(string filename);
 };

@@ -11,12 +11,6 @@ class Planet {
 
     private:
 
-        // Iterations
-        int n;
-
-        // number of planets
-        int size;
-
         // ID - Planets number from the sun
         int ID;
 
@@ -33,7 +27,7 @@ class Planet {
         mat vel;
         mat acc;
 
-        Planet(string Name, int N);
+        Planet(string Name, int id);
 
         double getMass();
 

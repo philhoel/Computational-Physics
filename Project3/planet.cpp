@@ -10,7 +10,6 @@ using namespace arma;
 
 Planet::Planet(string Name, int id) {
     name = Name;
-    n = N;
     ID = id;
     pos = zeros<mat> (2, n);
     vel = zeros<mat> (2, n);
