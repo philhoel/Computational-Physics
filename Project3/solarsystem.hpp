@@ -32,7 +32,7 @@ class Planet {
         mat vel;
         mat acc;
 
-        Planet(string Name, int id, int N);
+        Planet(string Name, int id, int N, double Mass);
 
         void addInitialValues(double x, double y, double vx, double vy);
 
@@ -62,9 +62,9 @@ class SolarSystem {
 
     public:
 
-        SolarSystem(int N, int size);
+        SolarSystem(int N);
 
-        void addPlanet(string name, int id, vec initial);
+        void addPlanet(string name, int id, vec initial, double mass);
 
         void setR_i(double x, double y);
 

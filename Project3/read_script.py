@@ -27,13 +27,13 @@ class ReadFile:
         with open(filename) as myFile:
             for line in myFile:
                 if line != "-":
-                    x, y, vx, vy, ax, ay = line.split().strip()
-                    self.planets[i].pos[j,0] = x
-                    self.planets[i].pos[j,1] = y
-                    self.planets[i].vel[j,0] = vx
-                    self.planets[i].vel[j,1] = vy
-                    self.planets[i].acc[j,0] = ax
-                    self.planets[i].acc[j,1] = ay
+                    x, y, vx, vy, ax, ay = line.split(" ")
+                    self.planets[i].pos[j,0] = float(x)
+                    self.planets[i].pos[j,1] = float(y)
+                    self.planets[i].vel[j,0] = float(vx)
+                    self.planets[i].vel[j,1] = float(vy)
+                    self.planets[i].acc[j,0] = float(ax)
+                    self.planets[i].acc[j,1] = float(ay)
                 else:
                     i += 1
         
