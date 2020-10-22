@@ -14,23 +14,17 @@ class Planet {
         // Iterations
         int n;
 
+        // number of planets
+        int size;
+
         // ID - Planets number from the sun
         int ID;
-
-        // Step size
-        double h;
 
         // Name of planet
         string name;
 
         // Mass of planet
         double mass;
-
-        // Gravitational force on planet
-        double force;
-
-        // Length form the sun
-        double r;
         
 
     public:
@@ -40,12 +34,8 @@ class Planet {
         mat acc;
 
         Planet(string Name, int N);
-        
-        void update_r(int i);
 
-        double getForce();
-
-        void setForce(double F);
+        double getMass();
 
         string getName();
 

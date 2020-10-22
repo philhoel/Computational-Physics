@@ -11,19 +11,20 @@ class SolarSystem {
         const double PI = 3.141592653589793238463;
 
         int n;
-        double solarMass;
-        double solarRadius;
         double G;
+        double h;
 
-        //List of planets
         Planets[] planetsArray;
-        //List of positions
-        //List of velocities
-        //List of acceleration
+        vec r_i;
+        vec r_j;
 
     public:
 
         SolarSystem(int N);
+
+        void setR_i(double x, double y);
+
+        void setR_j(double x, double y);
 
         void force_function(int i);
 
@@ -31,7 +32,7 @@ class SolarSystem {
 
         void euler();
 
-        void writeValuesToFile();
+        void writeValuesToFile(string filename);
 
         void writePlotInfo();
 };
