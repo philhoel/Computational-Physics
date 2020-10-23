@@ -63,6 +63,8 @@ class SolarSystem {
         double h;
         int size;
 
+        double solarmass;
+
         vector<Planet> planetsArray;
         vec r_i = zeros<vec> (2);
         vec r_j = zeros<vec> (2);
@@ -78,6 +80,8 @@ class SolarSystem {
         void setR_j(double x, double y);
 
         double force_function(int j, int i, int x);
+
+        double solarForce(double dist);
 
         void verlet();
 

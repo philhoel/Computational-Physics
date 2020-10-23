@@ -1,7 +1,7 @@
 1000
 0.0118719
-3
-Earth
+0
+Sun
 -
 5
 Jupiter

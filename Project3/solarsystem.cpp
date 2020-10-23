@@ -107,6 +107,7 @@ double SolarSystem::force_function(int j, int i, int x) {
     double zum_x = 0;
     double zum_y = 0;
 
+
     for (int k = 0; k < size; k++) {
 
         if (size == 1) {
@@ -115,7 +116,7 @@ double SolarSystem::force_function(int j, int i, int x) {
             double r_ii = sqrt(pow(r_i[0], 2) + pow(r_i[1], 2));
             zum_x += ((-G*planetsArray[k].getMass())/pow(r_ii, 3))*planetsArray[j].pos(0,i);
             zum_y += ((-G*planetsArray[k].getMass())/pow(r_ii, 3))*planetsArray[j].pos(1,i);
-            cout << r_ii << endl;
+            //cout << r_ii << endl;
 
         } else if (k != j) {
 

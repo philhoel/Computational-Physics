@@ -80,12 +80,16 @@ class ReadFile:
 
     def plot(self):
 
+        plt.figure(figsize=(6,6))
         for planet in self.planets:
 
             plt.plot(planet.pos[:,0], planet.pos[:,1], label=f"{planet.name}")
         
+        
         plt.xlabel("X Position")
         plt.ylabel("Y Position")
+        #plt.axis("equal")
+        #plt.axis([-5, 5, -5, 5])
         plt.legend()
         plt.savefig("planets.png")
         plt.show()
