@@ -43,10 +43,11 @@ getID()
 
 
 
-SolarSystem::SolarSystem(int N) {
+SolarSystem::SolarSystem(int N, double Time) {
     n = N;
+    T = Time;
     size = 0;
-    h = 1./n;
+    h = T*(1./(n-1));
     G = 4*PI*PI;
     r_i = zeros<vec> (2);
     r_j = zeros<vec> (2);
@@ -111,18 +112,16 @@ double SolarSystem::force_function(int j, int i, int x) {
         if (size == 1) {
 
             //cout << "hei" << endl;
-            double r_ii = sqrt(pow(r_i[0], 3) + pow(r_i[1], 3));
-            zum_x += ((-G*planetsArray[k].getMass())/r_ii)*r_i[0];
-            zum_x += ((-G*planetsArray[k].getMass())/r_ii)*r_i[1];
+            double r_ii = sqrt(pow(r_i[0], 2) + pow(r_i[1], 2));
+            zum_x += ((-G*planetsArray[k].getMass())/pow(r_ii, 3))*planetsArray[j].pos(0,i);
+            zum_y += ((-G*planetsArray[k].getMass())/pow(r_ii, 3))*planetsArray[j].pos(1,i);
+            cout << r_ii << endl;
 
         } else if (k != j) {
 
-            //cout << "hei" << endl;
-            //cout << j << endl;
             setR_j(planetsArray[k].pos(0,i), planetsArray[k].pos(1,i));
             double r_ii = sqrt(pow(r_i[0] - r_j[0], 2) + pow(r_i[1] - r_j[1], 2));
-            sum += ((-G*planetsArray[k].getMass())/r_ii)*(r_i - r_j);
-            //cout << r_i << endl;
+            sum += ((-G*planetsArray[k].getMass())/pow(r_ii, 2))*(r_i - r_j);
         }
     }
 
@@ -144,15 +143,15 @@ void SolarSystem::verlet() {
         // planets
         for (int j = 0; j < size; j++) {
 
-            setR_i(planetsArray[j].pos(0,i+1), planetsArray[j].pos(1,i+1));
+            setR_i(planetsArray[j].pos(0,i), planetsArray[j].pos(1,i));
 
             // Position
             planetsArray[j].pos(0,i+1) = planetsArray[j].pos(0,i) + planetsArray[j].vel(0,i)*h + pow(h,2)*0.5*planetsArray[j].acc(0,i);
-            planetsArray[j].pos(0,i+1) = planetsArray[j].pos(1,i) + planetsArray[j].vel(1,i)*h + pow(h,2)*0.5*planetsArray[j].acc(1,i);
+            planetsArray[j].pos(1,i+1) = planetsArray[j].pos(1,i) + planetsArray[j].vel(1,i)*h + pow(h,2)*0.5*planetsArray[j].acc(1,i);
 
             // Acceleration
-            planetsArray[j].acc(0,i+1) = force_function(j, i+1, 0);
-            planetsArray[j].acc(1,i+1) = force_function(j, i+1, 1);
+            planetsArray[j].acc(0,i+1) = force_function(j, i+1, 0)/planetsArray[j].getMass();
+            planetsArray[j].acc(1,i+1) = force_function(j, i+1, 1)/planetsArray[j].getMass();
 
             // Velocity
             planetsArray[j].vel(0,i+1) = planetsArray[j].vel(0,i) + h*(planetsArray[j].acc(0,i) + planetsArray[j].acc(0,i+1))/2;
@@ -171,6 +170,8 @@ void SolarSystem::euler() {
     for (int i = 0; i < n-1; i++) {
         // j = planets
         for (int j = 0; j < size; j++) {
+
+            //cout << planetsArray[j].pos(0,i) << " " << planetsArray[j].pos(1,i) << endl;
 
             setR_i(planetsArray[j].pos(0,i), planetsArray[j].pos(1,i));
 

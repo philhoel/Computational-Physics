@@ -5,11 +5,11 @@ import sys
 
 class Planets:
 
-    def __init__(self, name, ID, n):
+    def __init__(self, ID, name, n):
         self.n = n
-        self.pos = np.zeros((n,2))
-        self.vel = np.zeros((n,2))
-        self.acc = np.zeros((n,2))
+        self.pos = np.zeros((n-1,2))
+        self.vel = np.zeros((n-1,2))
+        self.acc = np.zeros((n-1,2))
 
         self.name = name
         self.ID = ID
@@ -81,9 +81,12 @@ class ReadFile:
     def plot(self):
 
         for planet in self.planets:
-            
-            plt.plot(planet.pos[:,0], planet.pos[:,1])
+
+            plt.plot(planet.pos[:,0], planet.pos[:,1], label=f"{planet.name}")
         
+        plt.xlabel("X Position")
+        plt.ylabel("Y Position")
+        plt.legend()
         plt.savefig("planets.png")
         plt.show()
 

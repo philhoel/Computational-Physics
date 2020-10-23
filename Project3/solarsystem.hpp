@@ -58,6 +58,7 @@ class SolarSystem {
         const double PI = 3.141592653589793238463;
 
         int n;
+        double T;
         double G;
         double h;
         int size;
@@ -68,7 +69,7 @@ class SolarSystem {
 
     public:
 
-        SolarSystem(int N);
+        SolarSystem(int N, double Time);
 
         void addPlanet(string name, int id, vec initial, double mass);
 
