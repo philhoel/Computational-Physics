@@ -26,10 +26,15 @@ class ReadFile:
         i = 0
         j = 0
         with open(filename) as myFile:
+
             myFile.readline()
+
             for line in myFile:
+
                 line = line.strip()
+
                 if line.strip() != str(chr(45)):
+
                     x, y, vx, vy, ax, ay = line.split()
                     self.planets[i].pos[j,0] = float(x)
                     self.planets[i].pos[j,1] = float(y)
@@ -38,7 +43,9 @@ class ReadFile:
                     self.planets[i].acc[j,0] = float(ax)
                     self.planets[i].acc[j,1] = float(ay)
                     j += 1
+
                 else:
+
                     i += 1
                     j = 0
         
@@ -58,8 +65,11 @@ class ReadFile:
                 #print(line)
                 
                 if line != "-":
+
                     lst.append(line)
+
                 else:
+
                     print(lst)
                     self.planets.append(Planets(int(lst[0]), lst[1], self.N))
                     lst.clear()
@@ -69,7 +79,9 @@ class ReadFile:
 
 
     def plot(self):
+
         for planet in self.planets:
+            
             plt.plot(planet.pos[:,0], planet.pos[:,1])
         
         plt.savefig("planets.png")

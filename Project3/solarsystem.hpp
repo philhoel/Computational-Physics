@@ -32,6 +32,12 @@ class Planet {
         mat vel;
         mat acc;
 
+        vec kin;
+        vec pot;
+
+        mat p;
+        mat L;
+
         Planet(string Name, int id, int N, double Mass);
 
         void addInitialValues(double x, double y, double vx, double vy);
