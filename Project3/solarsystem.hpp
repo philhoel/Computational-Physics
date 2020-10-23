@@ -62,6 +62,7 @@ class SolarSystem {
         double G;
         double h;
         int size;
+        int count;          //teller antall beregnede posisjoner  
 
         vector<Planet> planetsArray;
         vec r_i = zeros<vec> (2);
@@ -88,4 +89,6 @@ class SolarSystem {
         void writePlotInfo(string filename);
 
         double getPI();
+
+        void massCenter();
 };
