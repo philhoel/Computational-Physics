@@ -43,14 +43,50 @@ getID()
 
 
 
+
 SolarSystem::SolarSystem(int N, double Time) {
     n = N;
     T = Time;
     size = 0;
+    count = 0;
     h = T*(1./(n-1));
     G = 4*PI*PI;
     r_i = zeros<vec> (2);
     r_j = zeros<vec> (2);
+}
+
+void SolarSystem::massCenter()
+{
+    double tot_mass = 0;
+    double tmp_mass;
+    vec R_M = zeros<vec>(2);
+    vec V_M = zeros<vec>(2);
+    for(int i = 0; i < size; i++)
+    {   
+        tmp_mass = planetsArray[i].getMass();
+        
+        R_M[0] += planetsArray[i].pos(0,count)*tmp_mass;
+        R_M[1] += planetsArray[i].pos(1,count)*tmp_mass;
+
+        tot_mass += tmp_mass;
+
+        V_M[0] += planetsArray[i].vel(0,count)*tmp_mass;
+        V_M[1] += planetsArray[i].vel(1,count)*tmp_mass;
+
+    }
+
+    R_M = R_M/tot_mass;
+    V_M = V_M/tot_mass;
+
+    for(int i = 0; i < size; i++)
+    {
+        planetsArray[i].pos(0,count) = planetsArray[i].pos(0,count) - R_M[0];
+        planetsArray[i].pos(1,count) = planetsArray[i].pos(1,count) - R_M[1];
+
+        planetsArray[i].vel(0,count) = planetsArray[i].vel(0,count) - V_M[0];
+        planetsArray[i].vel(1,count) = planetsArray[i].vel(1,count) - V_M[1];
+
+    }
 }
 
 double SolarSystem::getPI() {
@@ -166,6 +202,9 @@ void SolarSystem::verlet() {
 
 // Euler Method
 void SolarSystem::euler() {
+
+    massCenter();
+    count += 1;
 
     // i = time
     for (int i = 0; i < n-1; i++) {

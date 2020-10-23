@@ -62,6 +62,7 @@ class SolarSystem {
         double G;
         double h;
         int size;
+        int count;          //teller antall beregnede posisjoner  
 
         double solarmass;
 
@@ -92,4 +93,6 @@ class SolarSystem {
         void writePlotInfo(string filename);
 
         double getPI();
+
+        void massCenter();
 };
