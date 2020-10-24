@@ -54,6 +54,8 @@ void CelestBody::initialValues(double x, double y, double z, double vx, double v
     vel(1, 0) = vy;
     vel(2, 0) = vz;
 
+    cout << name << " x:" << x << endl;
+
 }
 
 /*
@@ -69,6 +71,8 @@ void CelestBody::initialValues(double x, double y, double z) {
     pos(0, 0) = x;
     pos(1, 0) = y;
     pos(2, 0) = z;
+
+    cout << name << " x:" << x << endl;
 
 }
 
@@ -138,20 +142,21 @@ double SolarSystem::gravitation(int SP, int cnt, vec r_vec_cnt, int axis) {
 
     for (int body = 0; body < size; body++) {
         if (body != cnt) {
-
+            
+            
             // createing temporary r vector for bodies around current body
             r_vec_body(0) = CB[body].pos(0,SP); r_vec_body(1) = CB[body].pos(1,SP); r_vec_body(2) = CB[body].pos(2,SP);
+            //cout << "cnt: " << cnt << " body: " << body << " " << CB[body].name << " " << CB[body].pos(0,SP) << endl;
 
             // Creating r length -> sqrt(x^2 + y^2 + z^2)
-            r = sqrt( pow(CB[cnt].pos(0,SP) - r_vec_body(0), 2) + pow(CB[cnt].pos(2,SP) - r_vec_body(1), 2) + pow(CB[cnt].pos(2,SP) - r_vec_body(2), 2) );
+            r = sqrt( pow(CB[cnt].pos(0,SP) - r_vec_body(0), 2) + pow(CB[cnt].pos(1,SP) - r_vec_body(1), 2) + pow(CB[cnt].pos(2,SP) - r_vec_body(2), 2) );
+
 
             // Calculating the sum of F
             F += ( ( -g * CB[cnt].mass * CB[body].mass ) * ( r_vec_cnt[axis] - r_vec_body[axis] ) / pow(r, beta) );
-            
+            //cout << CB[cnt].name << " " << axis << ": " << F << endl;
         }
     }
-
-    cout << CB[cnt].name << " " << axis << ": " << F << endl;
 
     return F;
 
@@ -165,7 +170,7 @@ massCenter() - Calculates the center of mass in the system.
 void SolarSystem::massCenter() {
 
     double tot_mass = 0;
-    double tmp_mass;
+    double tmp_mass = 0;
 
     vec r_c = zeros<vec>(3);
     vec v_c = zeros<vec>(3);
@@ -174,13 +179,13 @@ void SolarSystem::massCenter() {
 
         tmp_mass = CB[i].mass;
 
-        cout << tmp_mass << endl;
 
         r_c[0] += CB[i].pos(0,0)*tmp_mass;
         r_c[1] += CB[i].pos(1,0)*tmp_mass;
         r_c[2] += CB[i].pos(2,0)*tmp_mass;
 
         tot_mass += tmp_mass;
+        //cout << CB[i].name << " : " << tot_mass << endl;
 
         v_c[0] += CB[i].vel(0,0)*tmp_mass;
         v_c[1] += CB[i].vel(1,0)*tmp_mass;
@@ -189,6 +194,9 @@ void SolarSystem::massCenter() {
 
     r_c = r_c/tot_mass;
     v_c = v_c/tot_mass;
+
+    cout << "r_c" << r_c << endl;
+    //cout << "v_c" << v_c << endl;
 
     for (int j = 0; j < size; j++) {
 
@@ -234,9 +242,14 @@ void SolarSystem::verlet() {
             CB[cnt].acc(1, SP+1) = gravitation(SP, cnt, r_vec_cnt, 1)/CB[cnt].mass;
             CB[cnt].acc(2, SP+1) = gravitation(SP, cnt, r_vec_cnt, 2)/CB[cnt].mass;   
 
+            //cout << CB[cnt].name << " pos(" << 0 << "," << SP << "): " << CB[cnt].pos(0, SP) << endl;
+            //cout << gravitation(SP, cnt, r_vec_cnt, 0) << endl;
+            //cout << CB[cnt].mass << endl;
+
             CB[cnt].vel(0, SP+1) = CB[cnt].vel(0,SP) + h*( CB[cnt].acc(0,SP) + CB[cnt].acc(0,SP+1) ) / 2;
             CB[cnt].vel(1, SP+1) = CB[cnt].vel(1,SP) + h*( CB[cnt].acc(1,SP) + CB[cnt].acc(1,SP+1) ) / 2;
             CB[cnt].vel(2, SP+1) = CB[cnt].vel(2,SP) + h*( CB[cnt].acc(2,SP) + CB[cnt].acc(2,SP+1) ) / 2;
+
         }
     }
 
@@ -310,6 +323,7 @@ void SolarSystem::writeValuesToFile(string filename) {
         my_file << a << endl;
 
         for (int j = 0; j < n-1; j++) {
+            //cout << CB[i].name << endl;
             my_file << CB[i].pos(0,j) << " " << CB[i].pos(1,j) << " " << CB[i].pos(2,j);
             my_file << " ";
             my_file << CB[i].vel(0,j) << " " << CB[i].vel(1,j) << " " << CB[i].vel(2,j);

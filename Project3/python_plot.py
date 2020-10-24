@@ -78,21 +78,21 @@ class ReadFile:
                     self.planets.append(Planets(name, self.N))
                     
 
-            print(self.planets)
+            #print(self.planets)
             
 
 
     def plot(self):
 
-        fig = plt.figure()
-        axes = plt.axes(projection='3d')
-        axes.set_xlabel("x")
-        axes.set_ylabel("y")
-        axes.set_zlabel("z")
-        axes.axis("equal")
+        fig = plt.figure(figsize=(6,6))
+        #axes = plt.axes(projection='3d')
+        #axes.set_xlabel("x")
+        #axes.set_ylabel("y")
+        #axes.set_zlabel("z")
+        #axes.axis("equal")
         for planet in self.planets:
 
-            axes.plot3D(planet.pos[:,0], planet.pos[:,1], ".", label=f"{planet.name}")
+            plt.plot(planet.pos[:,0], planet.pos[:,1], label=f"{planet.name}")
         
         
         
