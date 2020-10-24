@@ -1,240 +1,301 @@
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
-#include <fstream>
+#include <vector>
+#include <string>
 #include <armadillo>
 
-
 #include "solarsystem.hpp"
-
 
 using namespace std;
 using namespace arma;
 
+// -------------------------------------------------------------------------------------//
+// -------------------------------- CelestBody Struct --------------------------------- //
+// -------------------------------------------------------------------------------------//
+
 /*
-##########################################################
-##########################################################
-
-SolarSystem class
-
-SolarSystem()
-addPlanet()
-setR_i()
-setR_j()
-force_function()
-verlet()
-euler()
-writeValuesToFile()
-writePlotInfo()
-
-Planet class
-
-Planet()
-addInitialValues()
-getMass()
-getName()
-getID()
-
-
-
-##########################################################
-##########################################################
+Constructor - Takes in name, mass and number of iterations
 */
+CelestBody::CelestBody(string Name, double Mass, int n) {
 
+    name = Name;
+    mass = Mass;
 
+    pos = mat(3,n).fill(0.);
+    vel = mat(3,n).fill(0.);
+    acc = mat(3,n).fill(0.);
 
+    kin = zeros<vec>(n);
+    pot = zeros<vec>(n);
+
+    p = mat(3,n).fill(0.);
+    L = mat(3,n).fill(0.);
+}
+
+/*
+initialValues()
+
+Parameters:
+    double x
+    double y
+    double z
+
+    double vx
+    double vy
+    double vz
+*/
+void CelestBody::initialValues(double x, double y, double z, double vx, double vy, double vz) {
+    pos(0, 0) = x;
+    pos(1, 0) = y;
+    pos(2, 0) = z;
+
+    vel(0, 0) = vx;
+    vel(1, 0) = vy;
+    vel(2, 0) = vz;
+
+}
+
+/*
+Overloaded
+initialValues()
+
+Parameters:
+    double x
+    double y
+    double z
+*/
+void CelestBody::initialValues(double x, double y, double z) {
+    pos(0, 0) = x;
+    pos(1, 0) = y;
+    pos(2, 0) = z;
+
+}
+
+// ---------------------------------------------------------------------------------------------------------- //
+// ------------------------------------------- SolarSystem class -------------------------------------------- //
+// ---------------------------------------------------------------------------------------------------------- //
 
 SolarSystem::SolarSystem(int N, double Time) {
+
     n = N;
     T = Time;
-    size = 0;
-    count = 0;
     h = T*(1./(n-1));
-    G = 4*PI*PI;
-    r_i = zeros<vec> (2);
-    r_j = zeros<vec> (2);
+
+    g = 4*PI*PI;
+
+    size = 0;
 }
 
-void SolarSystem::massCenter()
-{
-    double tot_mass = 0;
-    double tmp_mass;
-    vec R_M = zeros<vec>(2);
-    vec V_M = zeros<vec>(2);
-    for(int i = 0; i < size; i++)
-    {   
-        tmp_mass = planetsArray[i].getMass();
-        
-        R_M[0] += planetsArray[i].pos(0,count)*tmp_mass;
-        R_M[1] += planetsArray[i].pos(1,count)*tmp_mass;
+/*
+addBody() - Adds a new celestial body to list
 
-        tot_mass += tmp_mass;
+Parameters:
+    name - name of body
+    mass - mass of body (should be scaled for for solarmass)
+    initial - vector with initial values (Takes 6 values)
+*/
+void SolarSystem::addBody(string name, double mass, vec initial) {
+    CelestBody new_obj(name, mass, n);
+    new_obj.initialValues(initial(0), initial(1), initial(2), initial(3), initial(4), initial(5));
+    CB.push_back(new_obj);
 
-        V_M[0] += planetsArray[i].vel(0,count)*tmp_mass;
-        V_M[1] += planetsArray[i].vel(1,count)*tmp_mass;
-
-    }
-
-    R_M = R_M/tot_mass;
-    V_M = V_M/tot_mass;
-
-    for(int i = 0; i < size; i++)
-    {
-        planetsArray[i].pos(0,count) = planetsArray[i].pos(0,count) - R_M[0];
-        planetsArray[i].pos(1,count) = planetsArray[i].pos(1,count) - R_M[1];
-
-        planetsArray[i].vel(0,count) = planetsArray[i].vel(0,count) - V_M[0];
-        planetsArray[i].vel(1,count) = planetsArray[i].vel(1,count) - V_M[1];
-
-    }
+    size++;
 }
 
-double SolarSystem::getPI() {
-    return PI;
-}
+/*
+addSun() - Adds a Sun to list (spescial method for sun)
 
-
-
-// Adds planet to solar system
-// Starts by calling addInitialValues() to add start values for planet
-// then adds planet to planetsArray
-void SolarSystem::addPlanet(string name, int id, vec initial, double mass) {
-
-    Planet new_obj(name, id, n, mass);
-
-    new_obj.addInitialValues(initial(0), initial(1), initial(2), initial(3));
-
-    planetsArray.push_back(new_obj);
+Parameters:
+    name - name of body
+    mass - mass of body (should be scaled for for solarmass)
+    initial - vector with initial values (initial values takes only 3 values)
+*/
+void SolarSystem::addSun(string name, double mass, vec initial) {
+    CelestBody new_obj(name, mass, n);
+    new_obj.initialValues(initial(0), initial(1), initial(2));
+    CB.push_back(new_obj);
 
     size++;
 }
 
 
+/*
+gravitation() - Calculates the gravitational force on a body from all other bodies in system
 
-// Sets r of current planet
-void SolarSystem::setR_i(double x, double y) {
-    r_i(0) = x;
-    r_i(1) = y;
+Parameters:
+    SP - Step point (Takes in the current step point)
+    cnt - Current number in body list
+    r_vec_cnt - temporary positional values for current body (x, y, z)
+    axis - A number from 0 - 2, to decide to return between x, y or z
+*/
+double SolarSystem::gravitation(int SP, int cnt, vec r_vec_cnt, int axis) {
+
+    double F = 0;
+    double r;
+    double beta = 3;
+    vec r_vec_body = zeros<vec>(3);
+
+    for (int body = 0; body < size; body++) {
+        if (body != cnt) {
+
+            // createing temporary r vector for bodies around current body
+            r_vec_body(0) = CB[body].pos(0,SP); r_vec_body(1) = CB[body].pos(1,SP); r_vec_body(2) = CB[body].pos(2,SP);
+
+            // Creating r length -> sqrt(x^2 + y^2 + z^2)
+            r = sqrt( abs( pow(CB[cnt].pos(0,SP), 2) + pow(CB[cnt].pos(2,SP), 2) + pow(CB[cnt].pos(2,SP), 2) ) );
+
+            // Calculating the sum of F
+            F += ( ( g*CB[body].mass ) / pow(r, beta) ) * ( r_vec_cnt[axis] - r_vec_body[axis] );
+        }
+    }
+
+    return F;
+
 }
-
-
-
-// Sets r of planets pulling on current planet
-void SolarSystem::setR_j(double x, double y) {
-    r_j(0) = x;
-    r_j(1) = y;
-}
-
-
 
 /*
-Calculates the force of the current planet
-
-Parameter:
-    j - Current planet
-    i - Current time step
-    x - To choose between x or y value
-
-First if statement is condition for when there is only one planet
+massCenter() - Calculates the center of mass in the system.
+               Loops over all bodies and divides their mass by the center of mass.
+               Also does same for velocity
 */
-double SolarSystem::force_function(int j, int i, int x) {
-    
-    vec sum = zeros<vec> (2);
-    double zum_x = 0;
-    double zum_y = 0;
+void SolarSystem::massCenter() {
 
+    double tot_mass = 0;
+    double tmp_mass;
 
-    for (int k = 0; k < size; k++) {
+    vec r_c = zeros<vec>(3);
+    vec v_c = zeros<vec>(3);
 
-        if (size == 1) {
+    for (int i = 0; i < size; i++) {
 
-            //cout << "hei" << endl;
-            double r_ii = sqrt(pow(r_i[0], 2) + pow(r_i[1], 2));
-            zum_x += ((-G*planetsArray[k].getMass())/pow(r_ii, 3))*planetsArray[j].pos(0,i);
-            zum_y += ((-G*planetsArray[k].getMass())/pow(r_ii, 3))*planetsArray[j].pos(1,i);
-            //cout << r_ii << endl;
+        tmp_mass = CB[i].mass;
 
-        } else if (k != j) {
+        cout << tmp_mass << endl;
 
-            setR_j(planetsArray[k].pos(0,i), planetsArray[k].pos(1,i));
-            double r_ii = sqrt(pow(r_i[0] - r_j[0], 2) + pow(r_i[1] - r_j[1], 2));
-            sum += ((-G*planetsArray[k].getMass())/pow(r_ii, 2))*(r_i - r_j);
-        }
+        r_c[0] += CB[i].pos(0,0)*tmp_mass;
+        r_c[1] += CB[i].pos(1,0)*tmp_mass;
+        r_c[2] += CB[i].pos(2,0)*tmp_mass;
+
+        tot_mass += tmp_mass;
+
+        v_c[0] += CB[i].vel(0,0)*tmp_mass;
+        v_c[1] += CB[i].vel(1,0)*tmp_mass;
+        v_c[2] += CB[i].vel(2,0)*tmp_mass;
     }
 
-    if (size == 1) {
-        sum[0] = zum_x;
-        sum[1] = zum_y;
+    r_c = r_c/tot_mass;
+    v_c = v_c/tot_mass;
+
+    for (int j = 0; j < size; j++) {
+
+        CB[j].pos(0,0) -= r_c[0];
+        CB[j].pos(1,0) -= r_c[1];
+        CB[j].pos(2,0) -= r_c[2];
+
+        CB[j].vel(0,0) -= v_c[0];
+        CB[j].vel(1,0) -= v_c[1];
+        CB[j].vel(2,0) -= v_c[2];
+
     }
 
-    return sum[x];
 }
 
-
-
-// Verlet Method
+/*
+verlet() - The numerical algorithm "Velocity Verlet"
+           Calculates values for next time step
+*/
 void SolarSystem::verlet() {
 
-    // time
-    for (int i = 0; i < n-1; i++) {
-        // planets
-        for (int j = 0; j < size; j++) {
+    vec r_vec_cnt = zeros<vec>(3);
+    massCenter();
 
-            setR_i(planetsArray[j].pos(0,i), planetsArray[j].pos(1,i));
+    // SP = Step Point (Time point)
+    for (int SP = 0; SP < n-1; SP++) {
 
-            // Position
-            planetsArray[j].pos(0,i+1) = planetsArray[j].pos(0,i) + planetsArray[j].vel(0,i)*h + pow(h,2)*0.5*planetsArray[j].acc(0,i);
-            planetsArray[j].pos(1,i+1) = planetsArray[j].pos(1,i) + planetsArray[j].vel(1,i)*h + pow(h,2)*0.5*planetsArray[j].acc(1,i);
+        // cnt = current (for current body)
+        for (int cnt = 0; cnt < size; cnt++) {
 
-            // Acceleration
-            planetsArray[j].acc(0,i+1) = force_function(j, i+1, 0)/planetsArray[j].getMass();
-            planetsArray[j].acc(1,i+1) = force_function(j, i+1, 1)/planetsArray[j].getMass();
+            //cout << CB[cnt].pos(0,SP) << endl;
 
-            // Velocity
-            planetsArray[j].vel(0,i+1) = planetsArray[j].vel(0,i) + h*(planetsArray[j].acc(0,i) + planetsArray[j].acc(0,i+1))/2;
-            planetsArray[j].vel(1,i+1) = planetsArray[j].vel(1,i) + h*(planetsArray[j].acc(1,i) + planetsArray[j].acc(1,i+1))/2;
+            CB[cnt].pos(0, SP+1) = CB[cnt].pos(0, SP) + CB[cnt].vel(0, SP)*h + ( pow(h,2)*CB[cnt].acc(0, SP) ) / 2;
+            CB[cnt].pos(1, SP+1) = CB[cnt].pos(1, SP) + CB[cnt].vel(1, SP)*h + ( pow(h,2)*CB[cnt].acc(1, SP) ) / 2;
+            CB[cnt].pos(2, SP+1) = CB[cnt].pos(2, SP) + CB[cnt].vel(2, SP)*h + ( pow(h,2)*CB[cnt].acc(2, SP) ) / 2;
+
+            // Creates a temporary r vector for the current body
+            r_vec_cnt(0) = CB[cnt].pos(0,SP+1); r_vec_cnt(1) = CB[cnt].pos(1,SP+1); r_vec_cnt(2) = CB[cnt].pos(2,SP+1);
+
+            //cout << r_vec_cnt << endl;
+
+            CB[cnt].acc(0, SP+1) = gravitation(SP, cnt, r_vec_cnt, 0)/CB[cnt].mass;
+            CB[cnt].acc(1, SP+1) = gravitation(SP, cnt, r_vec_cnt, 1)/CB[cnt].mass;
+            CB[cnt].acc(2, SP+1) = gravitation(SP, cnt, r_vec_cnt, 2)/CB[cnt].mass;   
+
+            CB[cnt].vel(0, SP+1) = CB[cnt].vel(0,SP) + h*( CB[cnt].acc(0,SP) + CB[cnt].acc(0,SP+1) ) / 2;
+            CB[cnt].vel(1, SP+1) = CB[cnt].vel(1,SP) + h*( CB[cnt].acc(1,SP) + CB[cnt].acc(1,SP+1) ) / 2;
+            CB[cnt].vel(2, SP+1) = CB[cnt].vel(2,SP) + h*( CB[cnt].acc(2,SP) + CB[cnt].acc(2,SP+1) ) / 2;
         }
     }
 
 }
 
-
-
-// Euler Method
+/*
+verlet() - The numerical algorithm "Euler"
+           Calculates values for next time step
+*/
 void SolarSystem::euler() {
 
+    vec r_vec_cnt = zeros<vec>(3);
     massCenter();
-    count += 1;
 
-    // i = time
-    for (int i = 0; i < n-1; i++) {
-        // j = planets
-        for (int j = 0; j < size; j++) {
+    // SP = Step Point (time point)
+    for (int SP = 0; SP < n-1; SP++) {
 
-            //cout << planetsArray[j].pos(0,i) << " " << planetsArray[j].pos(1,i) << endl;
+        // cnt = current (current celestial body)
+        for (int cnt = 0; cnt < size; cnt++) {
 
-            setR_i(planetsArray[j].pos(0,i), planetsArray[j].pos(1,i));
+            // Creates a temporary r vector for the current body
+            r_vec_cnt(0) = CB[cnt].pos(0,SP); r_vec_cnt(1) = CB[cnt].pos(1,SP); r_vec_cnt(2) = CB[cnt].pos(2,SP);
 
-            // Acceleration
-            planetsArray[j].acc(0,i) = force_function(j, i, 0);
-            planetsArray[j].acc(1,i) = force_function(j, i, 1);
+            CB[cnt].acc(0, SP) = gravitation(SP, cnt, r_vec_cnt, 0)/CB[cnt].mass;
+            CB[cnt].acc(1, SP) = gravitation(SP, cnt, r_vec_cnt, 1)/CB[cnt].mass;
+            CB[cnt].acc(2, SP) = gravitation(SP, cnt, r_vec_cnt, 2)/CB[cnt].mass;
 
-            // Velocity
-            planetsArray[j].vel(0,i+1) = planetsArray[j].vel(0,i) + planetsArray[j].acc(0,i)*h;
-            planetsArray[j].vel(1,i+1) = planetsArray[j].vel(1,i) + planetsArray[j].acc(1,i)*h;
+            CB[cnt].vel(0, SP+1) = CB[cnt].vel(0, SP) + CB[cnt].acc(0, SP)*h;
+            CB[cnt].vel(1, SP+1) = CB[cnt].vel(1, SP) + CB[cnt].acc(1, SP)*h;
+            CB[cnt].vel(2, SP+1) = CB[cnt].vel(2, SP) + CB[cnt].acc(2, SP)*h;
 
-            // Posisition
-            //cout << planetsArray[j].pos(0,i) << endl;
-            planetsArray[j].pos(0,i+1) = planetsArray[j].pos(0,i) + planetsArray[j].vel(0,i)*h;
-            planetsArray[j].pos(1,i+1) = planetsArray[j].pos(1,i) + planetsArray[j].vel(1,i)*h;
+            CB[cnt].pos(0, SP+1) = CB[cnt].pos(0, SP) + CB[cnt].vel(0, SP)*h;
+            CB[cnt].pos(1, SP+1) = CB[cnt].pos(1, SP) + CB[cnt].vel(1, SP)*h;
+            CB[cnt].pos(2, SP+1) = CB[cnt].pos(2, SP) + CB[cnt].vel(2, SP)*h;
         }
     }
 
 }
 
+/*
+writeValuesToFile() - writes the values of position, velocity and acceleration to a file
 
+Structure:
+    x y z vx vy vz ax ay az
+    .
+    .
+    .
+    x y z vx vy vz ax ay az
+    -
+    x y z vx vy vz ax ay az
+    .
+    .
+    .
+    x y z vx vy vz ax ay az
 
-// Write the values of position, velocity and acceleration to a .txt file
+    Each "-" signals a new body
+
+Parameters:
+    filename - name to give to file
+
+Python script assumes filename to be "values.txt"
+*/
 void SolarSystem::writeValuesToFile(string filename) {
 
     ofstream my_file;
@@ -246,16 +307,11 @@ void SolarSystem::writeValuesToFile(string filename) {
         my_file << a << endl;
 
         for (int j = 0; j < n-1; j++) {
-            my_file << planetsArray[i].pos(0,j) << " " << planetsArray[i].pos(1,j);
-            //cout << planetsArray[i].pos(0,j) << " " << planetsArray[i].pos(1,j);
+            my_file << CB[i].pos(0,j) << " " << CB[i].pos(1,j) << " " << CB[i].pos(2,j);
             my_file << " ";
-            //cout << " ";
-            my_file << planetsArray[i].vel(0,j) << " " << planetsArray[i].vel(1,j);
-            //cout << planetsArray[i].vel(0,j) << " " << planetsArray[i].vel(1,j);
+            my_file << CB[i].vel(0,j) << " " << CB[i].vel(1,j) << " " << CB[i].vel(2,j);
             my_file << " ";
-            //cout << " ";
-            my_file << planetsArray[i].acc(0,j) << " " << planetsArray[i].acc(1,j) << endl;
-            //cout << planetsArray[i].acc(0,j) << " " << planetsArray[i].acc(1,j) << endl;
+            my_file << CB[i].acc(0,j) << " " << CB[i].acc(1,j) << " " << CB[i].acc(2,j) << endl;
         }
     }
 
@@ -263,10 +319,25 @@ void SolarSystem::writeValuesToFile(string filename) {
 
 }
 
+/*
+writePlotInfo() - writes the name of the bodies to file
 
+Strucuture:
+    n
+    h
+    -
+    name
+    -
+    name
+    .
+    .
+    .
 
-// Write additional information of planets to a seperate file
-// This includes n, h, name and ID
+Parameters:
+    filename - name of file
+
+Python script assumes filename to be "plot_info.txt"
+*/
 void SolarSystem::writePlotInfo(string filename) {
 
     char a = 45;
@@ -278,8 +349,7 @@ void SolarSystem::writePlotInfo(string filename) {
 
     for (int i = 0; i < size; i++) {
 
-        my_file << planetsArray[i].getID() << endl;
-        my_file << planetsArray[i].getName() << endl;
+        my_file << CB[i].name << endl;
         my_file << a << endl;
     }
 
@@ -287,55 +357,3 @@ void SolarSystem::writePlotInfo(string filename) {
 
 }
 
-
-
-//                                                                               //
-// ---------------------------- PLANET class ----------------------------------- //
-//                                                                               //
-
-Planet::Planet(string Name, int id, int N, double Mass) {
-    name = Name;
-    ID = id;
-    n = N;
-    mass = Mass;
-    pos = mat(2, n).fill(0.);
-    vel = mat(2, n).fill(0.);
-    acc = mat(2, n).fill(0.);
-
-    // Kinetic and potetial energy
-    kin = zeros<vec> (n);
-    pot = zeros<vec> (n);
-
-    // Momentum and angular momentum
-    // L = r x p
-    p = mat(2, n).fill(0.);
-    L = mat(2, n).fill(0.);
-}
-
-
-
-// Adds initial values to position and velocity
-void Planet::addInitialValues(double x, double y, double vx, double vy) {
-    pos(0,0) = x;
-    pos(1,0) = y;
-    vel(0,0) = vx;
-    vel(1,0) = vy;
-}
-
-
-
-double Planet::getMass() {
-    return mass;
-}
-
-
-
-string Planet::getName() {
-    return name;
-}
-
-
-
-int Planet::getID() {
-    return ID;
-}

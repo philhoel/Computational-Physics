@@ -1,18 +1,18 @@
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 import numpy as np
 import os
 import sys
 
 class Planets:
 
-    def __init__(self, ID, name, n):
+    def __init__(self, name, n):
         self.n = n
-        self.pos = np.zeros((n-1,2))
-        self.vel = np.zeros((n-1,2))
-        self.acc = np.zeros((n-1,2))
+        self.pos = np.zeros((n-1,3))
+        self.vel = np.zeros((n-1,3))
+        self.acc = np.zeros((n-1,3))
 
         self.name = name
-        self.ID = ID
 
 
 class ReadFile:
@@ -35,13 +35,16 @@ class ReadFile:
 
                 if line.strip() != str(chr(45)):
 
-                    x, y, vx, vy, ax, ay = line.split()
+                    x, y, z, vx, vy, vz, ax, ay, az = line.split()
                     self.planets[i].pos[j,0] = float(x)
                     self.planets[i].pos[j,1] = float(y)
+                    self.planets[i].pos[j,2] = float(z)
                     self.planets[i].vel[j,0] = float(vx)
                     self.planets[i].vel[j,1] = float(vy)
+                    self.planets[i].vel[j,2] = float(vz)
                     self.planets[i].acc[j,0] = float(ax)
                     self.planets[i].acc[j,1] = float(ay)
+                    self.planets[i].acc[j,2] = float(az)
                     j += 1
 
                 else:
@@ -56,23 +59,22 @@ class ReadFile:
             self.N = int(myFile.readline())
             self.step = myFile.readline()
 
-            lst = list()
+            #lst = list()
 
             r = myFile.read()
             print(r)
 
             for line in r.split():
-                #print(line)
+                print(line)
                 
                 if line != "-":
 
-                    lst.append(line)
+                    name = line
 
                 else:
 
-                    print(lst)
-                    self.planets.append(Planets(int(lst[0]), lst[1], self.N))
-                    lst.clear()
+                    self.planets.append(Planets(name, self.N))
+                    
 
             print(self.planets)
             
@@ -80,16 +82,18 @@ class ReadFile:
 
     def plot(self):
 
-        plt.figure(figsize=(6,6))
+        fig = plt.figure()
+        axes = plt.axes(projection='3d')
+        axes.set_xlabel("x")
+        axes.set_ylabel("y")
+        axes.set_zlabel("z")
+        axes.axis("equal")
         for planet in self.planets:
 
-            plt.plot(planet.pos[:,0], planet.pos[:,1], label=f"{planet.name}")
+            axes.plot3D(planet.pos[:,0], planet.pos[:,1], label=f"{planet.name}")
         
         
-        plt.xlabel("X Position")
-        plt.ylabel("Y Position")
-        #plt.axis("equal")
-        #plt.axis([-5, 5, -5, 5])
+        
         plt.legend()
         plt.savefig("planets.png")
         plt.show()
