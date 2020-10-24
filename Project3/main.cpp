@@ -25,6 +25,8 @@ int main() {
     Earth(3) = 2*PI;
     */
     
+    // Values taken from NASA, positions taken directly (Should be in AU) 
+    // and velocities taken and multiplied with number of days per year
 
    vec Sun = zeros<vec> (3);
    Sun(0) = -6.158727289643375E-0;

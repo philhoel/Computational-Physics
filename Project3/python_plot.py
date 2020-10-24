@@ -14,6 +14,8 @@ class Planets:
 
         self.name = name
 
+    def __str__(self):
+        return f"{self.name}"
 
 class ReadFile:
 
@@ -90,7 +92,7 @@ class ReadFile:
         axes.axis("equal")
         for planet in self.planets:
 
-            axes.plot3D(planet.pos[:,0], planet.pos[:,1], label=f"{planet.name}")
+            axes.plot3D(planet.pos[:,0], planet.pos[:,1], ".", label=f"{planet.name}")
         
         
         
