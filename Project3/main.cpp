@@ -18,11 +18,20 @@ int main() {
     double PI = test_obj.PI;
 
     /*
-    vec Earth = zeros<vec> (4);
-    Earth(0) = 1;
-    Earth(1) = 0;
-    Earth(2) = 0;
-    Earth(3) = 2*PI;
+    vec S = zeros<vec> (3);
+    S(0) = 0;
+    S(1) = 0;
+    S(2) = 0;
+
+    vec E = zeros<vec> (3);
+    E(0) = 1;
+    E(1) = 0;
+    E(2) = 0;
+
+    vec J = zeros<vec> (3);
+    J(0) = 4;
+    J(1) = 0;
+    J(2) = 0;
     */
     
     // Values taken from NASA, positions taken directly (Should be in AU) 
@@ -106,6 +115,9 @@ int main() {
     Pluto(4) = 4.198441133967116E-03 * 365.25;
     Pluto(5) = -1.606688854250781E-04 * 365.25;
 
+    //test_obj.addSun("Sun", 1, S);
+    //test_obj.addSun("Earth", 3e-6, E);
+    //test_obj.addSun("Jupiter", 9.54e-4, J);
     test_obj.addSun("Sun", 1, Sun);
     test_obj.addBody("Earth", 3e-6, Earth);
     test_obj.addBody("Jupiter", 9.54e-4, Jupiter);

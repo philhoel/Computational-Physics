@@ -143,12 +143,15 @@ double SolarSystem::gravitation(int SP, int cnt, vec r_vec_cnt, int axis) {
             r_vec_body(0) = CB[body].pos(0,SP); r_vec_body(1) = CB[body].pos(1,SP); r_vec_body(2) = CB[body].pos(2,SP);
 
             // Creating r length -> sqrt(x^2 + y^2 + z^2)
-            r = sqrt( abs( pow(CB[cnt].pos(0,SP) - r_vec_body(0), 2) + pow(CB[cnt].pos(2,SP) - r_vec_body(1), 2) + pow(CB[cnt].pos(2,SP) - r_vec_body(2), 2) ) );
+            r = sqrt( pow(CB[cnt].pos(0,SP) - r_vec_body(0), 2) + pow(CB[cnt].pos(2,SP) - r_vec_body(1), 2) + pow(CB[cnt].pos(2,SP) - r_vec_body(2), 2) );
 
             // Calculating the sum of F
             F += ( ( -g * CB[cnt].mass * CB[body].mass ) * ( r_vec_cnt[axis] - r_vec_body[axis] ) / pow(r, beta) );
+            
         }
     }
+
+    cout << CB[cnt].name << " " << axis << ": " << F << endl;
 
     return F;
 
@@ -208,7 +211,7 @@ verlet() - The numerical algorithm "Velocity Verlet"
 void SolarSystem::verlet() {
 
     vec r_vec_cnt = zeros<vec>(3);
-    //massCenter();
+    massCenter();
 
     // SP = Step Point (Time point)
     for (int SP = 0; SP < n-1; SP++) {
