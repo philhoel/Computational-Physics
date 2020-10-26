@@ -8,17 +8,18 @@
 using namespace std;
 using namespace arma;
 
-void NASA_values(vec &Sun, vec &Earth, vec &Jupiter);
+void NASA_values(vec &Sun, vec &Earth, vec &Jupiter, vec &Mars,vec &Saturn, vec &Venus, vec &Mercury, vec &Uranus, vec &Neptune, vec &Pluto);
 void initial_values(vec &S, vec &E, vec &J, vec &Mer, vec &V, vec &M, vec &Sat, vec &U, vec &N, double pi);
 
 
 int main(int argc, char *argv[]) {
 
-    int n = (int) argv[2];
-    double t = (double) argv[3];
-    double mass = (double) argv[5];
+    int n = atoi(argv[2]);
+    double t = atof(argv[3]);
+    double mass = atof(argv[5]);
 
-
+    //int n = 2000;
+    //double t = 12;
     SolarSystem test_obj(n, t);
     double PI = test_obj.PI;
 
@@ -31,53 +32,75 @@ int main(int argc, char *argv[]) {
     vec Sat;
     vec U;
     vec N;
+    vec P;
+
 
     vec Sun;
-    vec Mercury;
+    vec Mars;
     vec Venus;
     vec Earth;
-    vec Mars;
+    vec Mercury;
     vec Jupiter;
     vec Saturn;
     vec Uranus;
     vec Neptune;
+    vec Pluto;
 
-    NASA_values(Sun, Earth, Jupiter);
+    NASA_values(Sun, Earth, Jupiter, Mars, Saturn, Venus, Mercury, Uranus, Neptune, Pluto);
     initial_values(S, E, J, Mer, V, M, Sat, U, N, PI);
-
+    string input= argv[6];
     test_obj.addSun("Sun", 1.0, S);
-
-    if (argv[6] == "a") {
+    if(input == "a"){
         test_obj.addBody("Earth", 3e-6, E);
-    } else if (argv[6] == "b") {
+    }else if(input == "b"){
         test_obj.addBody("Earth", 3e-6, E);
-        // mass = 9.54e-4
         test_obj.addBody("Jupiter", mass, J);
-    } else if (argv[6] == "c") {
-        test_obj.addBody("Mercury", 1.66e-7, Mer);
-        test_obj.addBody("Venus", 2.44e-6, V);
-        test_obj.addBody("Earth", 3e-6, E);
-        test_obj.addBody("Mars", 3.22e-7, M);
-        test_obj.addBody("Jupiter", mass, J);
-        test_obj.addBody("Saturn", 2.86e-4, Sat);
-        test_obj.addBody("Uranus", 4.37e-5, U);
-        test_obj.addBody("Neptune", 5.13e-5, N);
+    }else if(input == "c"){
+        test_obj.addBody("Earth", 3e-6, Earth);
+        test_obj.addBody("Jupiter", mass, Jupiter);
+        test_obj.addBody("Mercury", 1.66e-7, Mercury);
+        test_obj.addBody("Venus", 2.44e-6, Venus);
+        test_obj.addBody("Mars", 3.22e-7, Mars);
+        test_obj.addBody("Saturn", 2.86e-4, Saturn);
+        test_obj.addBody("Uranus", 4.37e-5, Uranus);
+        test_obj.addBody("Neptune", 5.13e-5, Neptune);
+        test_obj.addBody("Pluto", 6.55e-9, Pluto);
     }
-    
-    if (argv[4] == "euler") {
+    /*test_obj.addBody("Jupiter", 9.54e-4, Jupiter);
+    test_obj.addBody("Mars", 3.22e-7, Mars);
+    test_obj.addBody("Venus", 2.44e-6, Venus);
+    test_obj.addBody("Mercury", 1.66e-7, Mercury);
+    test_obj.addBody("Uranus", 4.37e-5, Uranus);
+    test_obj.addBody("Neptune", 5.13e-5, Neptune);
+    test_obj.addBody("Pluto", 6.55e-9, Pluto);*/
+
+    /*test_obj.addBody("Mercury", 1.66e-7, Mer);
+    test_obj.addBody("Venus", 2.44e-6, V);
+    test_obj.addBody("Mars", 3.22e-7, M);
+    test_obj.addBody("Jupiter", mass, J);
+    test_obj.addBody("Saturn", 2.86e-4, Sat);
+    test_obj.addBody("Uranus", 4.37e-5, U);
+    test_obj.addBody("Neptune", 5.13e-5, N);*/
+    string input2 = argv[4];
+    if(input2 == "euler"){
         test_obj.euler();
-    } else if (argv[4] == "verlet") {
+    }else if(input2 == "verlet"){
         test_obj.verlet();
     }
+
+
+    //test_obj.euler();
+
+    //test_obj.verlet();
 
     test_obj.writePlotInfo("plot_info.txt");
     test_obj.writeValuesToFile("values.txt");
 }
 
-void NASA_values(vec &Sun, vec &Earth, vec &Jupiter) {
+void NASA_values(vec &Sun, vec &Earth, vec &Jupiter, vec &Mars,vec &Saturn, vec &Venus, vec &Mercury, vec &Uranus, vec &Neptune, vec &Pluto) {
 
     Sun = zeros<vec> (6);
-    Sun(0) = -6.158727289643375E-0;
+    Sun(0) = -6.158727289643375E-03;
     Sun(1) = 6.384843795818435E-03;
     Sun(2) = 9.046249474982092E-05;
     Sun(3) = -7.234332664219356E-06 * 365.25;
@@ -99,6 +122,62 @@ void NASA_values(vec &Sun, vec &Earth, vec &Jupiter) {
     Jupiter(3) = 6.402308693680906E-03 * 365.25;
     Jupiter(4) = 4.198441133967116E-03 * 365.25;
     Jupiter(5) = -1.606688854250781E-04 * 365.25;
+
+    Mars = zeros<vec> (6);
+    Mars(0) = 1.272214290981063E+00;
+    Mars(1) = 6.357061456746934E-01;
+    Mars(2) = -1.808172669799765E-02;
+    Mars(3) = -5.652727216112586E-03 * 365.25;
+    Mars(4) = 1.374427785658439E-02 * 365.25;
+    Mars(5) = 4.268480851211387E-04 * 365.25;
+
+    Saturn = zeros<vec> (6);
+    Saturn(0) = 5.175292350241609E+00;
+    Saturn(1) = -8.543633656588499E+00;
+    Saturn(2) = -5.748143340428273E-02;
+    Saturn(3) = 4.461143391357680E-03 * 365.25;
+    Saturn(4) = 2.875435986042164E-03 * 365.25;
+    Saturn(5) = -2.273055269610145E-04 * 365.25;
+
+    Venus = zeros<vec> (6);
+    Venus(0) = -3.514928287195656E-01;
+    Venus(1) = 6.358488172813552E-01;
+    Venus(2) = 2.865648089021929E-02;
+    Venus(3) = -1.780881548732578E-02 * 365.25;
+    Venus(4) = -9.846986326668720E-03 * 365.25;
+    Venus(5) = 8.924181175967461E-04 * 365.25;
+
+    Mercury = zeros<vec> (6);
+    Mercury(0) = 3.143670922315332E-01;
+    Mercury(1) = 1.065411264192840E-01;
+    Mercury(2) = -2.112751089263323E-02;
+    Mercury(3) = -1.385295914052545E-02 * 365.25;
+    Mercury(4) = 2.810197115234333E-02 * 365.25;
+    Mercury(5) = 3.567096140614040E-03 * 365.25;
+
+    Uranus = zeros<vec> (6);
+    Uranus(0) = 1.551758289636478E+01;
+    Uranus(1) = 1.226559872169746E+01;
+    Uranus(2) = -1.554773476982917E-01;
+    Uranus(3) = -2.467768113603644E-03 * 365.25;
+    Uranus(4) = 2.902311949265869E-03 * 365.25;
+    Uranus(5) = 4.277562887275033E-05 * 365.25;
+
+    Neptune = zeros<vec> (6);
+    Neptune(0) = 2.941614517618505E+01;
+    Neptune(1) = -5.443342600803682E+00;
+    Neptune(2) = -5.658299106997762E-01;
+    Neptune(3) = 5.501849215323422E-04 * 365.25;
+    Neptune(4) = 3.105652684445751E-03 * 365.25;
+    Neptune(5) = -7.622466166465130E-05 * 365.25;
+
+    Pluto = zeros<vec> (6);
+    Pluto(0) = 1.384827010175508E+01;
+    Pluto(1) = -3.119498202697125E+01;
+    Pluto(2) = -6.676791489395038E-01;
+    Pluto(3) = 2.952319305045842E-03 * 365.25;
+    Pluto(4) = 6.077063426811567E-04 * 365.25;
+    Pluto(5) = -9.227677900255182E-04 * 365.25;
 
 }
 
@@ -130,7 +209,7 @@ void initial_values(vec &S, vec &E, vec &J, vec &Mer, vec &V, vec &M, vec &Sat, 
     M(0) = 1.52;
     M(3) = 0.7;
     M(4) = 1.5*pi;
-    
+
     J = zeros<vec> (6);
     J(0) = 5.2;
     J(1) = 0;
@@ -156,11 +235,11 @@ void initial_values(vec &S, vec &E, vec &J, vec &Mer, vec &V, vec &M, vec &Sat, 
 
 /*
 vec Sun = zeros<vec> (3);
-   Sun(0) = -6.158727289643375E-0;
+   Sun(0) = -6.158727289643375E-03;
    Sun(1) = 6.384843795818435E-03;
    Sun(2) = 9.046249474982092E-05;
 
-   
+
     vec Earth = zeros<vec> (6);
     Earth(0) = 8.575473846476438E-01;
     Earth(1) = 5.002546898150230E-01;

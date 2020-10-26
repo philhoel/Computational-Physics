@@ -53,10 +53,10 @@ class ReadFile:
 
                     i += 1
                     j = 0
-        
+
 
     def read_info(self, filename):
-        
+
             myFile = open(filename)
             self.N = int(myFile.readline())
             self.T = myFile.readline()
@@ -68,7 +68,7 @@ class ReadFile:
 
             for line in r.split():
                 print(line)
-                
+
                 if line != "-":
 
                     name = line
@@ -76,10 +76,10 @@ class ReadFile:
                 else:
 
                     self.planets.append(Planets(name, self.N))
-                    
+
 
             #print(self.planets)
-            
+
 
 
     def plot(self):
@@ -95,8 +95,8 @@ class ReadFile:
 
             else:
                 plt.plot(planet[i].pos[:,0], planet[i].pos[:,1], label=f"{planet[i].name}")
-        
-        
+
+
         plt.title(f"Simulation of Solarsystem with n = {self.N} and T = {self.T}")
         plt.xlabel("x (AU)")
         plt.ylabel("y (AU)")
@@ -111,7 +111,7 @@ class ReadFile:
         axes.set_xlabel("x")
         axes.set_ylabel("y")
         axes.set_zlabel("z")
-        axes.axis("equal")
+        #axes.axis("equal")
         planet = self.planets
         size = len(self.planets)
         for i in range(size):
@@ -122,8 +122,8 @@ class ReadFile:
 
             else:
                 axes.plot(planet[i].pos[:,0], planet[i].pos[:,1], planet[i].pos[:,2], label=f"{planet[i].name}")
-        
-        
+
+
         plt.title(f"Simulation of Solarsystem with n = {self.N} and T = {self.T}")
         plt.legend()
         plt.savefig("planets_all_3d_euler_100.png")
@@ -143,7 +143,7 @@ if __name__ == "__main__":
 
         test_obj.plot()
     else:
-        
+
         test_obj.plot3D()
 
     plt.show()
