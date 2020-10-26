@@ -20,7 +20,8 @@ int main(int argc, char *argv[]) {
 
     //int n = 2000;
     //double t = 12;
-    SolarSystem test_obj(n, t);
+    double beta = atof(argv[6]);
+    SolarSystem test_obj(n, t,beta);
     double PI = test_obj.PI;
 
     vec S;
