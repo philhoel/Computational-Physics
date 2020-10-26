@@ -249,6 +249,7 @@ void SolarSystem::verlet() {
 
         }
     }
+    cout << "Verlet Flops = " << 9*(n-1)*size * 3 * 15*size << endl;
 
 }
 
@@ -283,7 +284,7 @@ void SolarSystem::euler() {
             CB[cnt].pos(2, SP+1) = CB[cnt].pos(2, SP) + CB[cnt].vel(2, SP)*h;
         }
     }
-
+    cout << "Euler Flops = " << 15*(n-1)*size * 3 * 15*size << endl;
 }
 
 
