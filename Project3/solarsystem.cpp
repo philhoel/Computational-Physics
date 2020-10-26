@@ -418,6 +418,7 @@ void SolarSystem::writePlotInfo(string filename) {
     my_file.open(filename);
     my_file << n << endl;
     my_file << T << endl;
+    my_file << beta << endl;
 
     for (int i = 0; i < size; i++) {
 

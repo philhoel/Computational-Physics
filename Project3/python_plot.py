@@ -59,7 +59,8 @@ class ReadFile:
 
             myFile = open(filename)
             self.N = int(myFile.readline())
-            self.T = myFile.readline()
+            self.T = float(myFile.readline())
+            self.beta = float(myFile.readline())
 
             #lst = list()
 
@@ -90,8 +91,8 @@ class ReadFile:
         for i in range(size):
 
             if (i == 0):
-                #plt.scatter(planet[i].pos[:,0], planet[i].pos[:,1], c="orange", s=30, label=f"{planet[i].name}")
-                plt.plot(planet[i].pos[:,0], planet[i].pos[:,1], label=f"{planet[i].name}")
+                plt.scatter(planet[i].pos[:,0], planet[i].pos[:,1], c="orange", s=30, label=f"{planet[i].name}")
+
 
             else:
                 plt.plot(planet[i].pos[:,0], planet[i].pos[:,1], label=f"{planet[i].name}")
@@ -124,7 +125,7 @@ class ReadFile:
                 axes.plot(planet[i].pos[:,0], planet[i].pos[:,1], planet[i].pos[:,2], label=f"{planet[i].name}")
 
 
-        plt.title(f"Simulation of Solarsystem with n = {self.N} and T = {self.T}")
+        plt.title(f"Simulation of Solarsystem with n = {self.N}, T = {self.T}, beta = {self.beta}")
         plt.legend()
         plt.savefig("planets_all_3d_euler_100.png")
         plt.show()
