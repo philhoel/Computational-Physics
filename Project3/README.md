@@ -1,19 +1,29 @@
-### Project 3 - Solar System Model
+# Project 3 - Solar System Model
 
 ## Written by Philip Hoel, Theo G. Halvorsen and Elakkyen Pathmanathan
 
 Code:
+
     C++ for main
     Python for additional functions and plotting
 
 Structs:
+
     CelestBody - Creates a Celestial Body
 
 Classes:
+
     SolarSystem - Main class where all methods lie
+    
+Python Scripts:
+    
+    run_script.py - To run program
+    python_plot.py - To plot values
 
 Running program:
+
     To run program, use run_script.py
+    
     Python3 run_script.py -default -plot -method
 
     -default:
