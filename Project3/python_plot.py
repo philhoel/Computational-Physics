@@ -98,7 +98,7 @@ class ReadFile:
                 plt.plot(planet[i].pos[:,0], planet[i].pos[:,1], label=f"{planet[i].name}")
 
 
-        plt.title(f"Simulation of Solarsystem with n = {self.N} and T = {self.T}")
+        plt.title(f"Simulation of Solarsystem with n = {self.N}, T = {self.T}, beta = {self.beta}")
         plt.xlabel("x (AU)")
         plt.ylabel("y (AU)")
         plt.legend()
