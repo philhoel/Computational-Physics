@@ -14,6 +14,11 @@ Structs:
 Classes:
 
     SolarSystem - Main class where all methods lie
+    
+Python Scripts:
+    
+    run_script.py - To run program
+    python_plot.py - To plot values
 
 Running program:
 
