@@ -67,5 +67,9 @@ class SolarSystem {
 
         void writePlotInfo(string filename);
 
+        vector<CelestBody> getList();
+
+        int getN();
+
 
 };

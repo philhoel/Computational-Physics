@@ -54,7 +54,7 @@ void CelestBody::initialValues(double x, double y, double z, double vx, double v
     vel(1, 0) = vy;
     vel(2, 0) = vz;
 
-    cout << name << " x:" << x << endl;
+    cout << name << " - Initialized" << endl;
 
 }
 
@@ -195,9 +195,6 @@ void SolarSystem::massCenter() {
     r_c = r_c/tot_mass;
     v_c = v_c/tot_mass;
 
-    cout << "r_c" << r_c << endl;
-    //cout << "v_c" << v_c << endl;
-
     for (int j = 0; j < size; j++) {
 
         CB[j].pos(0,0) -= r_c[0];
@@ -289,6 +286,8 @@ void SolarSystem::euler() {
 
 }
 
+
+
 /*
 writeValuesToFile() - writes the values of position, velocity and acceleration to a file
 
@@ -362,7 +361,7 @@ void SolarSystem::writePlotInfo(string filename) {
     ofstream my_file;
     my_file.open(filename);
     my_file << n << endl;
-    my_file << h << endl;
+    my_file << T << endl;
 
     for (int i = 0; i < size; i++) {
 
@@ -374,3 +373,10 @@ void SolarSystem::writePlotInfo(string filename) {
 
 }
 
+vector<CelestBody> SolarSystem::getList() {
+    return CB;
+}
+
+int SolarSystem::getN() {
+    return n;
+}

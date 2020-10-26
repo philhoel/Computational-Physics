@@ -21,7 +21,7 @@ class ReadFile:
 
     def __init__(self):
         self.N = None
-        self.step = None
+        self.T = None
         self.planets = list()
 
     def read_values(self, filename):
@@ -59,7 +59,7 @@ class ReadFile:
         
             myFile = open(filename)
             self.N = int(myFile.readline())
-            self.step = myFile.readline()
+            self.T = myFile.readline()
 
             #lst = list()
 
@@ -85,26 +85,65 @@ class ReadFile:
     def plot(self):
 
         fig = plt.figure(figsize=(6,6))
-        #axes = plt.axes(projection='3d')
-        #axes.set_xlabel("x")
-        #axes.set_ylabel("y")
-        #axes.set_zlabel("z")
-        #axes.axis("equal")
-        for planet in self.planets:
+        planet = self.planets
+        size = len(self.planets)
+        for i in range(size):
 
-            plt.plot(planet.pos[:,0], planet.pos[:,1], label=f"{planet.name}")
+            if (i == 0):
+                #plt.scatter(planet[i].pos[:,0], planet[i].pos[:,1], c="orange", s=30, label=f"{planet[i].name}")
+                plt.plot(planet[i].pos[:,0], planet[i].pos[:,1], label=f"{planet[i].name}")
+
+            else:
+                plt.plot(planet[i].pos[:,0], planet[i].pos[:,1], label=f"{planet[i].name}")
         
         
-        
+        plt.title(f"Simulation of Solarsystem with n = {self.N} and T = {self.T}")
+        plt.xlabel("x (AU)")
+        plt.ylabel("y (AU)")
         plt.legend()
-        plt.savefig("planets.png")
+        plt.savefig("planets_all_2d_verlet_100.png")
         plt.show()
+
+    def plot3D(self):
+
+        fig = plt.figure()
+        axes = plt.gca(projection='3d')
+        axes.set_xlabel("x")
+        axes.set_ylabel("y")
+        axes.set_zlabel("z")
+        axes.axis("equal")
+        planet = self.planets
+        size = len(self.planets)
+        for i in range(size):
+
+            if (i == 0):
+                axes.scatter(planet[i].pos[:,0], planet[i].pos[:,1], planet[i].pos[:,2], ".", c="orange", s=30, label=f"{planet[i].name}")
+
+
+            else:
+                axes.plot(planet[i].pos[:,0], planet[i].pos[:,1], planet[i].pos[:,2], label=f"{planet[i].name}")
+        
+        
+        plt.title(f"Simulation of Solarsystem with n = {self.N} and T = {self.T}")
+        plt.legend()
+        plt.savefig("planets_all_3d_euler_100.png")
+        plt.show()
+
 
 
 if __name__ == "__main__":
 
+    p = sys.argv[1]
+
     test_obj = ReadFile()
     test_obj.read_info("plot_info.txt")
     test_obj.read_values("values.txt")
-    test_obj.plot()
+
+    if p == "2d":
+
+        test_obj.plot()
+    else:
+        
+        test_obj.plot3D()
+
     plt.show()
