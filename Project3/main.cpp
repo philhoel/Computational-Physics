@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
 
     NASA_values(Sun, Earth, Jupiter, Mars, Saturn, Venus, Mercury, Uranus, Neptune, Pluto);
     initial_values(S, E, J, Mer, V, M, Sat, U, N, PI);
-    string input= argv[6];
+    string input= argv[7];
     test_obj.addSun("Sun", 1.0, S);
     if(input == "a"){
         test_obj.addBody("Earth", 3e-6, E);

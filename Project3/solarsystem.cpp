@@ -72,7 +72,7 @@ void CelestBody::initialValues(double x, double y, double z) {
     pos(1, 0) = y;
     pos(2, 0) = z;
 
-    cout << name << " x:" << x << endl;
+    cout << name << " - Initialized" << endl;
 
 }
 
@@ -80,11 +80,12 @@ void CelestBody::initialValues(double x, double y, double z) {
 // ------------------------------------------- SolarSystem class -------------------------------------------- //
 // ---------------------------------------------------------------------------------------------------------- //
 
-SolarSystem::SolarSystem(int N, double Time) {
+SolarSystem::SolarSystem(int N, double Time, double Beta) {
 
     n = N;
     T = Time;
     h = T*(1./(n-1));
+    beta = Beta;
 
     g = 4*PI*PI;
 
@@ -137,7 +138,6 @@ double SolarSystem::gravitation(int SP, int cnt, vec r_vec_cnt, int axis) {
 
     double F = 0;
     double r;
-    double beta = 3;
     vec r_vec_body = zeros<vec>(3);
 
     for (int body = 0; body < size; body++) {
@@ -224,8 +224,6 @@ void SolarSystem::verlet() {
         // cnt = current (for current body)
         for (int cnt = 0; cnt < size; cnt++) {
 
-            //cout << CB[cnt].pos(0,SP) << endl;
-
             CB[cnt].pos(0, SP+1) = CB[cnt].pos(0, SP) + CB[cnt].vel(0, SP)*h + ( pow(h,2)*CB[cnt].acc(0, SP) ) / 2;
             CB[cnt].pos(1, SP+1) = CB[cnt].pos(1, SP) + CB[cnt].vel(1, SP)*h + ( pow(h,2)*CB[cnt].acc(1, SP) ) / 2;
             CB[cnt].pos(2, SP+1) = CB[cnt].pos(2, SP) + CB[cnt].vel(2, SP)*h + ( pow(h,2)*CB[cnt].acc(2, SP) ) / 2;
@@ -233,15 +231,9 @@ void SolarSystem::verlet() {
             // Creates a temporary r vector for the current body
             r_vec_cnt(0) = CB[cnt].pos(0,SP+1); r_vec_cnt(1) = CB[cnt].pos(1,SP+1); r_vec_cnt(2) = CB[cnt].pos(2,SP+1);
 
-            //cout << r_vec_cnt << endl;
-
             CB[cnt].acc(0, SP+1) = gravitation(SP, cnt, r_vec_cnt, 0)/CB[cnt].mass;
             CB[cnt].acc(1, SP+1) = gravitation(SP, cnt, r_vec_cnt, 1)/CB[cnt].mass;
             CB[cnt].acc(2, SP+1) = gravitation(SP, cnt, r_vec_cnt, 2)/CB[cnt].mass;   
-
-            //cout << CB[cnt].name << " pos(" << 0 << "," << SP << "): " << CB[cnt].pos(0, SP) << endl;
-            //cout << gravitation(SP, cnt, r_vec_cnt, 0) << endl;
-            //cout << CB[cnt].mass << endl;
 
             CB[cnt].vel(0, SP+1) = CB[cnt].vel(0,SP) + h*( CB[cnt].acc(0,SP) + CB[cnt].acc(0,SP+1) ) / 2;
             CB[cnt].vel(1, SP+1) = CB[cnt].vel(1,SP) + h*( CB[cnt].acc(1,SP) + CB[cnt].acc(1,SP+1) ) / 2;
@@ -249,6 +241,7 @@ void SolarSystem::verlet() {
 
         }
     }
+
     cout << "Verlet Flops = " << 9*(n-1)*size * 3 * 15*size << endl;
 
 }
@@ -284,9 +277,71 @@ void SolarSystem::euler() {
             CB[cnt].pos(2, SP+1) = CB[cnt].pos(2, SP) + CB[cnt].vel(2, SP)*h;
         }
     }
+
     cout << "Euler Flops = " << 15*(n-1)*size * 3 * 15*size << endl;
+
 }
 
+/*
+Calculates potential and kinetic energy
+*/
+void SolarSystem::energy() {
+
+    for (int j = 0; j < size; j++) {
+        for (int i = 0; i < n; i++) {
+
+            double v_squared = CB[j].vel(0,i)*CB[j].vel(0,i) + CB[j].vel(1,i)*CB[j].vel(1,i) + CB[j].vel(2,i)*CB[j].vel(2,i);
+            double r = sqrt( pow( CB[j].pos(0,i), 2 ) + pow( CB[j].pos(1,i), 2 ) + pow( CB[j].pos(2,i), 2 ) );
+        
+            CB[j].kin(i) = 0.5 * CB[j].mass * v_squared;
+            CB[j].pot(i) = CB[j].mass * g * r;
+        }
+    }
+}
+
+void SolarSystem::writeEnergyToFile(string filename) {
+
+    ofstream my_file;
+    my_file.open(filename);
+    char a = 45;
+
+    for (int i = 0; i < n; i++) {
+
+        my_file << CB[1].pot(i) << " " << CB[1].kin(i) << endl;
+    }
+
+    my_file.close();
+
+}
+
+/*
+Unit test for energyConservation
+Finds two max values, each from each half of time interval and checks if they are the
+same within a certain tolerance
+If they are the same, that means energy is conserved
+*/
+void SolarSystem::energyConservation(int k) {
+
+    double tol = 1e-6;
+
+    double max_x_1 = 0;
+    double max_x_2 = 0;
+    for (int i = 0; i < n/2; i++) {
+        if (CB[k].pot(i) > max_x_1) {
+            max_x_1  = CB[k].pot(i);
+            //cout << max_x_1 << endl;
+        }
+    }
+
+    for (int j = n/2 +1; j < n; j++) {
+        if (CB[k].pot(j) > max_x_2) {
+            max_x_2 = CB[k].pot(j);
+        }
+    }
+
+
+    assert( (max_x_1 - max_x_2 < tol) );
+}
 
 
 /*

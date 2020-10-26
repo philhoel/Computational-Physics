@@ -38,6 +38,8 @@ class SolarSystem {
         int n;
         int size;
 
+        double beta;
+
         double T;
         double h;
 
@@ -49,7 +51,7 @@ class SolarSystem {
 
         const double PI = 3.141592653589793238463;
 
-        SolarSystem(int N, double Time);
+        SolarSystem(int N, double Time, double Beta = 3.0);
 
         void addBody(string name, double mass, vec initial);
 
@@ -62,6 +64,14 @@ class SolarSystem {
         void verlet();
 
         void euler();
+
+        void energy();
+
+        void energyConservation(int k);
+
+        void mercuryPerihelion();
+
+        void writeEnergyToFile(string filename);
 
         void writeValuesToFile(string filename);
 
