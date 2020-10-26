@@ -12,6 +12,7 @@ Structs:
     CelestBody - Creates a Celestial Body
 
 Classes:
+
     SolarSystem - Main class where all methods lie
 
 Running program:
