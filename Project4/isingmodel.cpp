@@ -153,7 +153,7 @@ void Ising::MonteCarlo(int mcs, bool d) {
         //cout << Eave[mcs-1] << endl;
         Mave(mcs-1) = M;
 
-        reset();
+        //reset();
     }
 
     cout << Eave(3) << endl;
