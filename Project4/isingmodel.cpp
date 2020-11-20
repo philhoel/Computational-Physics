@@ -58,7 +58,7 @@ void Ising::reset() {
 // Initializes energy
 void Ising::initialize() {
 
-    for (int x = 0; x < n; x++) {
+    for (int x = 0; x < n; x++) {
         for (int y = 0; y < n; y++) {
             Grid(x,y) = 1;
             M += Grid(x, y);
@@ -78,7 +78,7 @@ void Ising::initialize() {
 // Initializes energy
 void Ising::initialize_rand() {
 
-    for (int x = 0; x < n; x++) {
+    for (int x = 0; x < n; x++) {
         for (int y = 0; y < n; y++) {
             if (rand()%2 == 0) {
                 Grid(x,y) = 1;
@@ -102,7 +102,7 @@ void Ising::initialize_rand() {
 void Ising::Metropolis() {
 
     for (int y = 0; y < n; y++) {
-        for (int x = 0; x < n; x++) {
+        for (int x = 0; x < n; x++) {
 
             int ix = (int) (rand())%(n);
             int iy = (int) (rand())%(n);
@@ -128,13 +128,33 @@ void Ising::Metropolis() {
 void Ising::MonteCarlo(int mcs) {
 
     for (int cycles = 1; cycles <= mcs; cycles++) {
+    Metropolis();
+
+    average[0] += E;
+    average[1] += E*E;
+    average[2] += M;
+    average[3] += M*M;
+    average[4] += fabs(M);
+
+    reset();
+    }
+    
+}
+
+void Ising::MonteCarlo(int mcs, bool d) {
+
+    Eave = zeros<vec> (mcs);
+    Mave = zeros<vec> (mcs);
+
+    for (int cycles = 1; cycles <= mcs; cycles++) {
         Metropolis();
-        average[0] += E;
-        average[1] += E*E;
-        average[2] += M;
-        average[3] += M*M;
-        average[4] += fabs(M);
+
+        Eave(mcs-1) = E;
+        //cout << Eave[mcs-1] << endl;
+        Mave(mcs-1) = M;
 
         reset();
     }
+
+    cout << Eave(3) << endl;
 }

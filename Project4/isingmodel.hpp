@@ -31,6 +31,9 @@ class Ising {
 
         double average[5];
 
+        vec Eave;
+        vec Mave;
+
         Ising(int N, double temp, bool r = true);
 
         int PBC(int i, int limit, int add);
@@ -44,6 +47,8 @@ class Ising {
         void Metropolis();
 
         void MonteCarlo(int mcs);
+
+        void MonteCarlo(int mcs, bool d);
 
 };
 #endif
