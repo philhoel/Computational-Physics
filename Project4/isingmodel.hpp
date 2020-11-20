@@ -21,17 +21,29 @@ class Ising {
         
         double M;
 
-        int n;
+        double T; // Temperature
 
-        Ising(int N);
+        int n; // Grid size
+
+        bool ran; // To run with random initializer or normal
+
+        double w[17]; // Check weight for new config in metropolis
+
+        double average[5];
+
+        Ising(int N, double temp, bool r = true);
 
         int PBC(int i, int limit, int add);
 
+        void reset();
+
+        void initialize_rand();
+
+        void initialize();
+
         void Metropolis();
 
-        void WriteToFile();
-
-
+        void MonteCarlo(int mcs);
 
 };
 #endif
