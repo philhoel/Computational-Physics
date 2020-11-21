@@ -15,10 +15,11 @@ int main(int argc, char* argv[]) {
 
     srand(time(NULL));
 
-    System tempChangeProgram(20, 1000, 2, 2.3, 0.05, "tempValues.csv");
-    System constTempProgram(20, 1000, "MCvalues.csv");
+    System tempChangeProgram(20, 1000000, 2, 2.3, 0.005, "tempValues.csv");
+    //System constTempProgram(20, 10000, "MCvalues.csv");
 
-    constTempProgram.constTemp(1, 2.4);
+    tempChangeProgram.tempChange();
+    //constTempProgram.MCtemp(1, 2.4);
 
 
     return 0;

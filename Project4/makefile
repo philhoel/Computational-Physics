@@ -5,4 +5,4 @@ compile:
 
 execute:
 	./main
-	python3 read.py MCvalues.csv 20
+	python3 read.py tempValues.csv 20 1000000

@@ -44,7 +44,7 @@ void System::tempChange() {
         Ising model(n, temp);
         model.MonteCarlo(mcs);
 
-        E.push_back(model.average[0]*norm);
+        E.push_back(model.average[0]*norm/pow(n,2));
         E2.push_back(model.average[1]*norm);
         M.push_back(model.average[2]*norm);
         M2.push_back(model.average[3]*norm);
@@ -63,23 +63,57 @@ void System::tempChange() {
     vec.push_back(M2);
     vec.push_back(Mabs);
     vec.push_back(temperature);
+
+    WriteToFile(vec);
 }
 
+void System::MCtemp(double low, double high) {
+
+    ave = zeros<mat> (8, mcs);
+
+    for (int i = 1; i < mcs; i++) {
+        Ising model(n, low);
+        Ising model2(n, high);
+        Ising model3(n, low, false);
+        Ising model4(n, high, false);
+        model.MonteCarlo(mcs, true);
+        model2.MonteCarlo(mcs, true);
+        model3.MonteCarlo(mcs, true);
+        model4.MonteCarlo(mcs, true);
+
+        ave(0, i) = model.average[0]*norm;
+        ave(1, i) = model2.average[0]*norm;
+        ave(2, i) = model3.average[0]*norm;
+        ave(3, i) = model4.average[0]*norm;
+        ave(4, i) = model.average[1]*norm;
+        ave(5, i) = model2.average[1]*norm;
+        ave(6, i) = model3.average[1]*norm;
+        ave(7, i) = model4.average[1]*norm;
+
+    }
+
+    ave = ave/pow(n,2);
+    WriteMCToFile();
+    
+}
+
+/*
 void System::constTemp(double low, double high) {
 
     Ising model(n, low);
     Ising model2(n, high);
     Ising model3(n, low, false);
     Ising model4(n, high, false);
-    model.MonteCarlo(mcs, true);
-    model2.MonteCarlo(mcs, true);
-    model3.MonteCarlo(mcs, true);
-    model4.MonteCarlo(mcs, true);
+    model.MonteCarlo(mcs, true, norm);
+    model2.MonteCarlo(mcs, true, norm);
+    model3.MonteCarlo(mcs, true, norm);
+    model4.MonteCarlo(mcs, true, norm);
 
     WriteMCToFile(model, model2, model3, model4);
-    cout << model.Eave[3] << endl;
+    //cout << model.Eave[3] << endl;
 
 }
+*/
 
 void System::WriteToFile(vector<vector<double> >& vec) {
 
@@ -102,6 +136,34 @@ void System::WriteToFile(vector<vector<double> >& vec) {
     }
     myfile.close();
 }
+
+void System::WriteMCToFile() {
+
+    ofstream myfile;
+    myfile.open(filename);
+    myfile << "EO_low, EO_high, EU_low, EU_high, MO_low, MO_high, MU_low, MU_high" << endl;
+    for (int i = 0; i < mcs; i++) {
+        myfile << ave(0, i);
+        myfile << ",";
+        myfile << ave(1,i);
+        myfile << ",";
+        myfile << ave(2,i);
+        myfile << ",";
+        myfile << ave(3,i);
+        myfile << ",";
+        myfile << ave(4,i);
+        myfile << ",";
+        myfile << ave(5,i);
+        myfile << ",";
+        myfile << ave(6,i);
+        myfile << ",";
+        myfile << ave(7,i);
+        myfile << endl;
+    }
+
+}
+
+/*
 
 void System::WriteMCToFile(Ising& obj, Ising& obj2, Ising& obj3, Ising& obj4) {
 
@@ -128,3 +190,5 @@ void System::WriteMCToFile(Ising& obj, Ising& obj2, Ising& obj3, Ising& obj4) {
     }
 
 }
+
+*/

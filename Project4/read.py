@@ -6,12 +6,24 @@ import os
 
 
 f = sys.argv[1]
-n = sys.argv[2]
+n = int(sys.argv[2])
+mcs = int(sys.argv[3])
 
 df = pandas.read_csv(f)
 print(df)
 
 #print(df.iloc[:,0])
 
-#plt.plot(df.iloc[:,5], df.iloc[:,0]/n**2)
-#plt.show()
+mc = np.linspace(0, mcs, mcs)
+
+"""
+plt.plot(mc, df.iloc[:,0])
+plt.plot(mc, df.iloc[:,1])
+plt.plot(mc, df.iloc[:,2])
+plt.plot(mc, df.iloc[:,3])
+plt.xscale("log")
+plt.show()
+"""
+
+plt.plot(df.iloc[:,5], df.iloc[:,0])
+plt.show()
