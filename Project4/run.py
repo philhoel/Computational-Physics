@@ -15,4 +15,4 @@ print("Compiling...")
 os.system("g++ main_f.cpp isingmodel.cpp -o main -larmadillo -llapack -lblas")
 print("Executing...")
 for i in range(40, 101, 20):
-    os.system(f"./main 2 2.5 0.05 {i} 1000 tempV_{i}.csv")
+    os.system(f"./main 2 2.5 0.05 {i} 10000 tempV_{i}.csv")
