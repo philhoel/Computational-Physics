@@ -27,6 +27,7 @@ plt.ylabel(r"$\langle E \rangle$")
 plt.title("Mean energy plot")
 plt.legend()
 plt.show()
+
 """
 
 plt.plot(df.iloc[:,5], df.iloc[:,0])
