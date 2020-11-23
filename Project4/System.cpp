@@ -69,9 +69,10 @@ void System::tempChange() {
 
 void System::MCtemp(double low, double high) {
 
-    ave = zeros<mat> (8, mcs);
+    ave = zeros<mat> (8, 7);
+    int j = 0;
 
-    for (int i = 1; i < mcs; i++) {
+    for (int i = 1; i < mcs; i*=10) {
         Ising model(n, low);
         Ising model2(n, high);
         Ising model3(n, low, false);
@@ -81,14 +82,18 @@ void System::MCtemp(double low, double high) {
         model3.MonteCarlo(i, true);
         model4.MonteCarlo(i, true);
 
-        ave(0, i) = model.average[0]*norm;
-        ave(1, i) = model2.average[0]*norm;
-        ave(2, i) = model3.average[0]*norm;
-        ave(3, i) = model4.average[0]*norm;
-        ave(4, i) = model.average[1]*norm;
-        ave(5, i) = model2.average[1]*norm;
-        ave(6, i) = model3.average[1]*norm;
-        ave(7, i) = model4.average[1]*norm;
+        double newNorm = 1./i;
+
+        ave(0, j) = model.average[0]*newNorm;
+        ave(1, j) = model2.average[0]*newNorm;
+        ave(2, j) = model3.average[0]*newNorm;
+        ave(3, j) = model4.average[0]*newNorm;
+        ave(4, j) = model.average[1]*newNorm;
+        ave(5, j) = model2.average[1]*newNorm;
+        ave(6, j) = model3.average[1]*newNorm;
+        ave(7, j) = model4.average[1]*newNorm;
+
+        j++;
 
     }
 
@@ -142,7 +147,7 @@ void System::WriteMCToFile() {
     ofstream myfile;
     myfile.open(filename);
     myfile << "EO_low, EO_high, EU_low, EU_high, MO_low, MO_high, MU_low, MU_high" << endl;
-    for (int i = 0; i < mcs; i++) {
+    for (int i = 0; i < 7; i++) {
         myfile << ave(0, i);
         myfile << ",";
         myfile << ave(1,i);

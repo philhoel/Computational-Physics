@@ -31,8 +31,8 @@ class Ising {
 
         double average[5];
 
-        //vec Eave;
-        //vec Mave;
+        vec Eave;
+        vec Mave;
 
         Ising(int N, double temp, bool r = true);
 
@@ -48,9 +48,9 @@ class Ising {
 
         void MonteCarlo(int mcs);
 
-        void MonteCarlo(int mcs, bool d);
+        //void MonteCarlo(int mcs, bool d);
 
-        //void MonteCarlo(int mcs, bool d, double norm);
+        void MonteCarlo(int mcs, bool d);
 
 };
 #endif
