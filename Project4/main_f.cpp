@@ -32,8 +32,8 @@ int main(int argc, char *argv[]) {
     vector<double> M2;
     vector<double> Mabs;
     vector<double> temperature;
-    vector<double> Evariance;
-    vector<double> Mvariance;
+    vector<double> Cv;
+    vector<double> X;
 
     for (double temp = initial_temp; temp <= final_temp; temp += temp_step) {
 
@@ -41,16 +41,20 @@ int main(int argc, char *argv[]) {
         model.MonteCarlo(mcs);
 
         E.push_back(model.average[0]*norm/pow(n,2));
-        E2.push_back(model.average[1]*norm);
+        E2.push_back(model.average[1]*norm/pow(n,4));
         M.push_back(model.average[2]*norm/pow(n,2));
-        M2.push_back(model.average[3]*norm);
-        Mabs.push_back(model.average[4]*norm);
+        M2.push_back(model.average[3]*norm/pow(n,4));
+        Mabs.push_back(model.average[4]*norm/pow(n,2));
         temperature.push_back(temp);
 
 
+        double Evar, Mvar;
+        Evar = (E2[counter]-E[counter]*E[counter]);
+        Mvar = (M2[counter]-Mabs[counter]*Mabs[counter]);
 
-        Evariance.push_back(E2[counter]-E[counter]*E[counter]);
-        Mvariance.push_back(M2[counter]-M[counter]*M[counter]);
+
+        Cv.push_back(Evar/pow(temp,2));
+        X.push_back(Mvar/temp);
 
         counter++;
         
@@ -59,10 +63,10 @@ int main(int argc, char *argv[]) {
     vector<vector<double> > vec;
 
     vec.push_back(E);
-    vec.push_back(E2);
     vec.push_back(M);
-    vec.push_back(M2);
     vec.push_back(Mabs);
+    vec.push_back(Cv);
+    vec.push_back(X);
     vec.push_back(temperature);
 
     WriteToFile(vec, counter, file);
@@ -74,7 +78,7 @@ void WriteToFile(vector<vector<double> >& vec, int counter, string filename) {
 
     ofstream myfile;
     myfile.open(filename);
-    myfile << "E, E2, M, M2, Mabs, Temp" << endl;
+    myfile << "E, M, Mabs, Cv, X, Temp" << endl;
     for (int j = 0; j < counter; j++) {
         myfile << vec[0][j];
         myfile << ",";
