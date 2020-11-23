@@ -23,13 +23,13 @@ class Ising {
 
         double T; // Temperature
 
-        int n; // Grid size
+        int n, acp_count; // Grid size
 
         bool ran; // To run with random initializer or normal
 
         double w[17]; // Check weight for new config in metropolis
 
-        double average[5];
+        double average[7];
 
         vec Eave;
         vec Mave;

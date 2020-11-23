@@ -26,44 +26,41 @@ int main(int argc, char *argv[]) {
     string file = argv[6];
     int counter = 0;
 
-    vector<double> E;
-    vector<double> E2;
-    vector<double> M;
-    vector<double> M2;
-    vector<double> Mabs;
+    vector<double> CV;
+    vector<double> X;
     vector<double> temperature;
     vector<double> Evariance;
     vector<double> Mvariance;
+    vector<double> M;
+    vector<double> E;
 
     for (double temp = initial_temp; temp <= final_temp; temp += temp_step) {
 
         Ising model(n, temp);
         model.MonteCarlo(mcs);
 
-        E.push_back(model.average[0]*norm/pow(n,2));
-        E2.push_back(model.average[1]*norm);
-        M.push_back(model.average[2]*norm/pow(n,2));
-        M2.push_back(model.average[3]*norm);
-        Mabs.push_back(model.average[4]*norm);
+
+
+        CV.push_back(model.average[5]/(temp*temp));
+        X.push_back(model.average[6]/temp);
+        Evariance.push_back(model.average[5]);
+        Mvariance.push_back(model.average[6]);
+        E.push_back(model.average[0]);
+        M.push_back(model.average[2]);
         temperature.push_back(temp);
-
-
-
-        Evariance.push_back(E2[counter]-E[counter]*E[counter]);
-        Mvariance.push_back(M2[counter]-M[counter]*M[counter]);
-
         counter++;
         
     }
 
     vector<vector<double> > vec;
-
     vec.push_back(E);
-    vec.push_back(E2);
     vec.push_back(M);
-    vec.push_back(M2);
-    vec.push_back(Mabs);
+    vec.push_back(Evariance);
+    vec.push_back(Mvariance);
+    vec.push_back(CV);
+    vec.push_back(X);
     vec.push_back(temperature);
+    
 
     WriteToFile(vec, counter, file);
 
@@ -74,7 +71,7 @@ void WriteToFile(vector<vector<double> >& vec, int counter, string filename) {
 
     ofstream myfile;
     myfile.open(filename);
-    myfile << "E, E2, M, M2, Mabs, Temp" << endl;
+    myfile << "E, M, E^2, M^2, CV, X, Temp" << endl;
     for (int j = 0; j < counter; j++) {
         myfile << vec[0][j];
         myfile << ",";
@@ -87,6 +84,8 @@ void WriteToFile(vector<vector<double> >& vec, int counter, string filename) {
         myfile << vec[4][j];
         myfile << ",";
         myfile << vec[5][j];
+        myfile << ",";
+        myfile << vec[6][j];
         myfile << endl;
     }
     myfile.close();

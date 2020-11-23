@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <armadillo>
+#include <ctime>
 
 #include "isingmodel.hpp"
 
@@ -18,6 +19,8 @@ int main(int argc, char *argv[]) {
         double high = 2.4;
         double norm = 1./mcs;
 
+        clock_t begin = clock();
+
         Ising model(n, low);
         Ising model2(n, high);
         Ising model3(n, low, false);
@@ -26,6 +29,10 @@ int main(int argc, char *argv[]) {
         model2.MonteCarlo(mcs, true);
         model3.MonteCarlo(mcs, true);
         model4.MonteCarlo(mcs, true);
+
+        clock_t end = clock();
+        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+        cout << "time taken = " << elapsed_secs << endl;
 
         WriteMCToFile(model, model2, model3, model4, "MCvalues.csv", mcs, n);
 
