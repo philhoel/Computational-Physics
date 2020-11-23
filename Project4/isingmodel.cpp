@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <armadillo>
+#include <omp.h>
 
 #include <time.h>
 
@@ -101,25 +102,25 @@ void Ising::initialize_rand() {
 // Metropolis
 void Ising::Metropolis() {
 
-    for (int y = 0; y < n; y++) {
-        for (int x = 0; x < n; x++) {
-
-            int ix = (int) (rand())%(n);
-            int iy = (int) (rand())%(n);
+    int lim = n*n;
+    for (int y = 0; y < lim; y++) {
         
-            int dE = 2*Grid(iy, ix)*
-            (Grid(iy, PBC(ix, n, -1))+
-            Grid(PBC(iy, n, -1), ix) +
-            Grid(iy, PBC(ix, n, 1))+
-            Grid(PBC(iy, n, 1), ix));
 
-
-            if ((int) rand()%n <= w[dE+8]) {
-                Grid(iy,ix) *= -1;
-                M += 2*Grid(iy, ix);
-                E += dE;
-            }
+        int ix = (int) (rand())%(n);
+        int iy = (int) (rand())%(n);
+    
+        int dE = 2*Grid(iy, ix)*
+        (Grid(iy, PBC(ix, n, -1))+
+        Grid(PBC(iy, n, -1), ix) +
+        Grid(iy, PBC(ix, n, 1))+
+        Grid(PBC(iy, n, 1), ix));
+        if ((int) rand()%n <= w[dE+8]) {
+            Grid(iy,ix) *= -1;
+            M += 2*Grid(iy, ix);
+            E += dE;
+            acp_count++;
         }
+    
     }
 }
 
@@ -136,7 +137,8 @@ void Ising::MonteCarlo(int mcs) {
         average[3] += M*M;
         average[4] += fabs(M);
     }
-    
+    average[5] = average[1] - average[0]*average[0];
+    average[6] = average[3] - average[2]*average[2];
 }
 
 void Ising::MonteCarlo(int mcs, bool d) {
