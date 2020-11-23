@@ -135,45 +135,25 @@ void Ising::MonteCarlo(int mcs) {
         average[2] += M;
         average[3] += M*M;
         average[4] += fabs(M);
-
-        reset();
     }
     
 }
 
 void Ising::MonteCarlo(int mcs, bool d) {
 
-    //Eave = zeros<vec> (mcs);
-    //Mave = zeros<vec> (mcs);
-
-    for (int cycles = 1; cycles <= mcs; cycles++) {
-        Metropolis();
-
-        average[0] += E;
-        average[1] += M;
-
-        reset();
-    }
-
-    //cout << Eave(3) << endl;
-}
-
-/*
-void Ising::MonteCarlo(int mcs, bool d, double norm) {
-
     Eave = zeros<vec> (mcs);
     Mave = zeros<vec> (mcs);
+    double norm;
 
     for (int cycles = 1; cycles <= mcs; cycles++) {
         Metropolis();
+        norm = 1./cycles;
 
-        Eave(cycles-1) = E*norm;
-        //cout << Eave[mcs-1] << endl;
-        Mave(cycles-1) = M*norm;
+        average[0] += E;
+        Eave(cycles - 1) = average[0]*norm;
+        average[1] += M;
+        Mave(cycles - 1) = average[1]*norm;
 
-        reset();
     }
 
-    //cout << Eave(3) << endl;
 }
-*/
