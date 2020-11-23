@@ -16,14 +16,16 @@ print(df)
 
 mc = np.linspace(0, mcs, mcs)
 
-"""
+
 plt.plot(mc, df.iloc[:,0])
 plt.plot(mc, df.iloc[:,1])
 plt.plot(mc, df.iloc[:,2])
 plt.plot(mc, df.iloc[:,3])
 plt.xscale("log")
 plt.show()
+
 """
 
 plt.plot(df.iloc[:,5], df.iloc[:,0])
 plt.show()
+"""

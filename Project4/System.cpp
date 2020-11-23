@@ -76,10 +76,10 @@ void System::MCtemp(double low, double high) {
         Ising model2(n, high);
         Ising model3(n, low, false);
         Ising model4(n, high, false);
-        model.MonteCarlo(mcs, true);
-        model2.MonteCarlo(mcs, true);
-        model3.MonteCarlo(mcs, true);
-        model4.MonteCarlo(mcs, true);
+        model.MonteCarlo(i, true);
+        model2.MonteCarlo(i, true);
+        model3.MonteCarlo(i, true);
+        model4.MonteCarlo(i, true);
 
         ave(0, i) = model.average[0]*norm;
         ave(1, i) = model2.average[0]*norm;
