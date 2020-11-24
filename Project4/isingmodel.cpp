@@ -101,19 +101,30 @@ void Ising::initialize_rand() {
 // Metropolis
 void Ising::Metropolis() {
 
+    //std::default_random_engine generator;
+    //std::uniform_real_distribution<double> dist(0.0, 1.0);
+
     int lim = n*n;
     for (int y = 0; y < lim; y++) {
         
 
         int ix = (int) (rand())%(n);
         int iy = (int) (rand())%(n);
+
+        double g = double(rand())/(RAND_MAX);
+        //cout << "g = " << g << endl;
     
         int dE = 2*Grid(iy, ix)*
+
         (Grid(iy, PBC(ix, n, -1))+
+
         Grid(PBC(iy, n, -1), ix) +
+
         Grid(iy, PBC(ix, n, 1))+
+
         Grid(PBC(iy, n, 1), ix));
-        if ((int) rand()%RAND_MAX <= w[dE+8]) {
+
+        if (g <= w[dE+8]) {
             Grid(iy,ix) *= -1;
             M += 2*Grid(iy, ix);
             E += dE;
@@ -136,8 +147,6 @@ void Ising::MonteCarlo(int mcs) {
         average[3] += M*M;
         average[4] += fabs(M);
     }
-    //average[5] = average[1] - average[0]*average[0];
-    //average[6] = average[3] - average[2]*average[2];
 }
 
 void Ising::MonteCarlo(int mcs, bool d) {

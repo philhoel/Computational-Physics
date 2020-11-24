@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 
         counter++;
 
-        cout << "<E> = " << E[counter] << endl;
+        //cout << "<E> = " << E[counter] << endl;
         
     }
 
