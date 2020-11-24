@@ -57,6 +57,8 @@ int main(int argc, char *argv[]) {
         X.push_back(Mvar/temp);
 
         counter++;
+
+        cout << "<E> = " << E[counter] << endl;
         
     }
 

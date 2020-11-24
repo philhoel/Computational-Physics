@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include <iomanip>
 #include <armadillo>
-#include <omp.h>
 
 #include <time.h>
 
@@ -25,7 +24,7 @@ Ising::Ising(int N, double temp, bool r) {
     }
 
     for (int de = -8; de <= 8; de+=4) {
-        w[de+8] = exp(-de/T);
+        w[de+8] = exp(-de/(T));
     }
 
     for (int i = 0; i < 5; i++) {
@@ -114,7 +113,7 @@ void Ising::Metropolis() {
         Grid(PBC(iy, n, -1), ix) +
         Grid(iy, PBC(ix, n, 1))+
         Grid(PBC(iy, n, 1), ix));
-        if ((int) rand()%n <= w[dE+8]) {
+        if ((int) rand()%RAND_MAX <= w[dE+8]) {
             Grid(iy,ix) *= -1;
             M += 2*Grid(iy, ix);
             E += dE;
@@ -137,8 +136,8 @@ void Ising::MonteCarlo(int mcs) {
         average[3] += M*M;
         average[4] += fabs(M);
     }
-    average[5] = average[1] - average[0]*average[0];
-    average[6] = average[3] - average[2]*average[2];
+    //average[5] = average[1] - average[0]*average[0];
+    //average[6] = average[3] - average[2]*average[2];
 }
 
 void Ising::MonteCarlo(int mcs, bool d) {
