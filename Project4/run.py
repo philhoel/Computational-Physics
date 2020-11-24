@@ -7,7 +7,7 @@ print("Compiling...")
 os.system("g++ main_d.cpp isingmodel.cpp -o main -larmadillo -llapack -lblas")
 print("Executing...")
 os.system("./main 1000000 20")
-os.system("python3 read.py MCvalues.csv 20 1000000")
+os.system("python3 read_d.py MCvalues.csv 20 1000000")
 
 
 """

@@ -23,7 +23,13 @@ class Ising {
 
         double T; // Temperature
 
-        int n, acp_count; // Grid size
+        int n;
+
+        int num_E;
+        
+        int acpt_count;
+
+        int num_carlos;
 
         bool ran; // To run with random initializer or normal
 
@@ -31,8 +37,10 @@ class Ising {
 
         double average[7];
 
+        vector<double> count_de;
         vec Eave;
         vec Mave;
+        vec accept;
 
         Ising(int N, double temp, bool r = true);
 

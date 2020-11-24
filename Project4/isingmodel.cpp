@@ -128,7 +128,7 @@ void Ising::Metropolis() {
             Grid(iy,ix) *= -1;
             M += 2*Grid(iy, ix);
             E += dE;
-            acp_count++;
+            acpt_count++;
         }
     
     }
@@ -153,7 +153,10 @@ void Ising::MonteCarlo(int mcs, bool d) {
 
     Eave = zeros<vec> (mcs);
     Mave = zeros<vec> (mcs);
+    accept = zeros<vec> (mcs);
     double norm;
+    bool firsttime = true;
+    double tol = 1e-2;
 
     for (int cycles = 1; cycles <= mcs; cycles++) {
         Metropolis();
@@ -163,6 +166,26 @@ void Ising::MonteCarlo(int mcs, bool d) {
         Eave(cycles - 1) = average[0]*norm;
         average[1] += M;
         Mave(cycles - 1) = average[1]*norm;
+
+
+        accept(cycles - 1) = acpt_count;
+        //acpt_count = 0;
+
+        if(cycles > 1000)
+        {
+            if( fabs(Eave(cycles-1)-Eave(cycles-2)) < tol )
+            {
+                //cout << "bajs =" << E << endl;
+                count_de.push_back(E/(n*n));
+                num_E++;
+
+                if(firsttime)
+                {
+                    num_carlos = cycles;
+                    firsttime = false;
+                }
+            }
+        }
 
     }
 

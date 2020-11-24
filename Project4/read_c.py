@@ -80,3 +80,9 @@ plt.xlabel(r"Temparature [T][$J/k_B$]")
 plt.ylabel(r"$Suceptability \chi$")
 plt.savefig("X_f.png")
 plt.show()
+
+
+plt.plot(df.iloc[:,4], df.iloc[:,5])
+plt.xlabel(r"Temparature [T][$J/k_B$]")
+plt.ylabel("Accepted Configurations")
+plt.show()

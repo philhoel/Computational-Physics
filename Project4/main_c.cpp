@@ -9,7 +9,7 @@
 
 #include "isingmodel.hpp"
 
-void WriteToFile(vector<vector<double> >& vec, int counter, string filename, int n);
+void WriteToFile(vector<vector<double> >& vec, int counter, string filename, int n, double norm);
 
 int main(int argc, char *argv[]) {
 
@@ -40,6 +40,7 @@ int main(int argc, char *argv[]) {
     vector<double> temperature;
     vector<double> Cv;
     vector<double> X;
+    vector<double> acc;
 
     for (double temp = initial_temp; temp <= final_temp; temp += temp_step) {
 
@@ -62,6 +63,8 @@ int main(int argc, char *argv[]) {
         Cv.push_back(Evar/(pow(temp,2)*pow(n,2)));
         X.push_back(Mvar/(temp*pow(n,2)));
 
+        acc.push_back(model.acpt_count);
+
         counter++;
         
     }
@@ -74,16 +77,16 @@ int main(int argc, char *argv[]) {
     vec.push_back(temperature);
     
 
-    WriteToFile(vec, counter, file, n);
+    WriteToFile(vec, counter, file, n, norm);
 
     return 0;
 }
 
-void WriteToFile(vector<vector<double> >& vec, int counter, string filename, int n) {
+void WriteToFile(vector<vector<double> >& vec, int counter, string filename, int n, double norm) {
 
     ofstream myfile;
     myfile.open(filename);
-    myfile << "E, M, CV, X, Temp" << endl;
+    myfile << "E, M, CV, X, Temp, acc" << endl;
     for (int j = 0; j < counter; j++) {
         myfile << vec[0][j]/pow(n,2);
         myfile << ",";
@@ -94,6 +97,8 @@ void WriteToFile(vector<vector<double> >& vec, int counter, string filename, int
         myfile << vec[3][j];
         myfile << ",";
         myfile << vec[4][j];
+        myfile << ",";
+        myfile << vec[5][j];
         myfile << endl;
     }
     myfile.close();

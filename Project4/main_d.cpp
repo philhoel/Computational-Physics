@@ -43,7 +43,7 @@ void WriteMCToFile(Ising& obj, Ising& obj2, Ising& obj3, Ising& obj4, string fil
 
     ofstream myfile;
     myfile.open(filename);
-    myfile << "EO_low, EO_high, EU_low, EU_high, MO_low, MO_high, MU_low, MU_high" << endl;
+    myfile << "EO_low, EO_high, EU_low, EU_high, MO_low, MO_high, MU_low, MU_high, acc" << endl;
     for (int i = 0; i < mcs; i++) {
         myfile << obj.Eave[i]/pow(n,2);
         myfile << ",";
@@ -60,6 +60,8 @@ void WriteMCToFile(Ising& obj, Ising& obj2, Ising& obj3, Ising& obj4, string fil
         myfile << obj3.Mave[i]/pow(n,2);
         myfile << ",";
         myfile << obj4.Mave[i]/pow(n,2);
+        myfile << ",";
+        myfile << obj.accept[i];
         myfile << endl;
     }
 
