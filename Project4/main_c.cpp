@@ -32,29 +32,36 @@ int main(int argc, char *argv[]) {
     string file = argv[6];
     int counter = 0;
 
-    vector<double> CV;
-    vector<double> X;
-    vector<double> temperature;
-    vector<double> Mabs;
     vector<double> E;
+    vector<double> E2;
+    vector<double> M;
+    vector<double> M2;
+    vector<double> Mabs;
+    vector<double> temperature;
+    vector<double> Cv;
+    vector<double> X;
 
     for (double temp = initial_temp; temp <= final_temp; temp += temp_step) {
 
         Ising model(n, temp);
         model.MonteCarlo(mcs);
 
-        double E_ = model.average[0]*norm/pow(n,2);
-        double Mabs_ = model.average[4]*norm/pow(n,2);
-
-        E.push_back(E_);
-        Mabs.push_back(Mabs_);
-
-        double E2 = model.average[1]*norm/pow(n,4);
-        double M2 = model.average[3]*norm/pow(n,4);
-        
-        CV.push_back((E2-E_*E_)/pow(temp,2));
-        X.push_back((M2 - Mabs_*Mabs_)/temp);
+        E.push_back(model.average[0]*norm);
+        E2.push_back(model.average[1]*norm);
+        M.push_back(model.average[2]*norm);
+        M2.push_back(model.average[3]*norm);
+        Mabs.push_back(model.average[4]*norm);
         temperature.push_back(temp);
+
+
+        double Evar, Mvar;
+        Evar = (E2[counter]-E[counter]*E[counter]);
+        Mvar = (M2[counter]-Mabs[counter]*Mabs[counter]);
+
+
+        Cv.push_back(Evar/(pow(temp,2)*pow(n,2)));
+        X.push_back(Mvar/(temp*pow(n,2)));
+
         counter++;
         
     }
@@ -62,7 +69,7 @@ int main(int argc, char *argv[]) {
     vector<vector<double> > vec;
     vec.push_back(E);
     vec.push_back(Mabs);
-    vec.push_back(CV);
+    vec.push_back(Cv);
     vec.push_back(X);
     vec.push_back(temperature);
     
@@ -78,9 +85,9 @@ void WriteToFile(vector<vector<double> >& vec, int counter, string filename, int
     myfile.open(filename);
     myfile << "E, M, CV, X, Temp" << endl;
     for (int j = 0; j < counter; j++) {
-        myfile << vec[0][j];
+        myfile << vec[0][j]/pow(n,2);
         myfile << ",";
-        myfile << vec[1][j];
+        myfile << vec[1][j]/pow(n,2);
         myfile << ",";
         myfile << vec[2][j];
         myfile << ",";

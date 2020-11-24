@@ -40,11 +40,14 @@ Cv = []
 X = []
 for i in df.iloc[:,4]:
     E.append(meanE(i)/4)
-    E2.append(meanE2(i)/4)
+    E2.append(meanE2(i)/16)
     M.append(meanM(i)/4)
-    M2.append(meanM2(i)/4)
+    M2.append(meanM2(i)/16)
     Cv.append((meanE2(i) - meanE(i)*meanE(i))/(i**2))
     X.append((meanM2(i) - meanM(i)*meanM(i))/i)
+
+
+
 
 plt.plot(df.iloc[:,4], df.iloc[:,0], ".", label=r"$\langle E \rangle$")
 plt.plot(df.iloc[:,4], E, label="E")
@@ -74,6 +77,6 @@ plt.plot(df.iloc[:,4], df.iloc[:,3], ".", label=r"$\chi$")
 plt.plot(df.iloc[:,4], X, label=r"$\chi$ (analytic)")
 plt.legend()
 plt.xlabel(r"Temparature [T][$J/k_B$]")
-plt.ylabel(r"Suceptability \chi")
+plt.ylabel(r"$Suceptability \chi$")
 plt.savefig("X_f.png")
 plt.show()
