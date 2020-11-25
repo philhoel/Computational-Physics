@@ -27,7 +27,7 @@ Ising::Ising(int N, double temp, bool r) {
     }
 
     for (int de = -8; de <= 8; de+=4) {
-        w[de+8] = exp(-de/T);
+        w[de+8] = exp(-de/(T));
     }
 
     for (int i = 0; i < 5; i++) {
@@ -104,17 +104,27 @@ void Ising::initialize_rand() {
 // Metropolis
 void Ising::Metropolis() {
 
+    //std::default_random_engine generator;
+    //std::uniform_real_distribution<double> dist(0.0, 1.0);
+
     int lim = n*n;
     for (int y = 0; y < lim; y++) {
         
 
         int ix = (int) (rand())%(n);
         int iy = (int) (rand())%(n);
+
+        double g = double(rand())/(RAND_MAX);
+        //cout << "g = " << g << endl;
     
         int dE = 2*Grid(iy, ix)*
+
         (Grid(iy, PBC(ix, n, -1))+
+
         Grid(PBC(iy, n, -1), ix) +
+
         Grid(iy, PBC(ix, n, 1))+
+
         Grid(PBC(iy, n, 1), ix));
         if ((double) rand()/RAND_MAX <= w[dE+8]) {
             Grid(iy,ix) *= -1;
@@ -140,7 +150,6 @@ void Ising::MonteCarlo(int mcs) {
         average[3] += M*M;      
         average[4] += fabs(M);
     }
-
 }
 
 //brukes for oppgave d
@@ -163,12 +172,11 @@ void Ising::MonteCarlo(int mcs, bool d) {
         average[1] += M;
         Mave(cycles - 1) = average[1]*norm;
 
-        //cout << E << endl;
 
         accept(cycles - 1) = acpt_count;
         //acpt_count = 0;
-        
-        if(cycles > 1000)
+
+        if(cycles > 10000)
         {
             if( fabs(Eave(cycles-1)-Eave(cycles-2)) < tol )
             {

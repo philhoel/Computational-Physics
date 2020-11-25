@@ -19,7 +19,6 @@ plt.xlabel(r"Temparature [T][$J/k_B$]")
 plt.ylabel(r"Mean Energy $\langle E \rangle$")
 plt.savefig("average_E_f.png")
 
-
 plt.figure()
 plt.plot(df_40.iloc[:,5], df_40.iloc[:,2], label="L=40")
 plt.plot(df_60.iloc[:,5], df_60.iloc[:,2], label="L=60")
