@@ -23,7 +23,13 @@ class Ising {
 
         double T; // Temperature
 
-        int n, acp_count; // Grid size
+        int n; // Grid size
+
+        int num_E; //size of count_de
+
+        int acpt_count; //accepted energies in metropolis
+
+        int num_carlos; //number of sycles before stady state
 
         bool ran; // To run with random initializer or normal
 
@@ -31,8 +37,10 @@ class Ising {
 
         double average[7];
 
+        vector<double> count_de;
         vec Eave;
         vec Mave;
+        vec accept;
 
         Ising(int N, double temp, bool r = true);
 
@@ -51,6 +59,8 @@ class Ising {
         //void MonteCarlo(int mcs, bool d);
 
         void MonteCarlo(int mcs, bool d);
+
+        void MonteCarloMPI(int mcs, int); 
 
 };
 #endif
