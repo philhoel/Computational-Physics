@@ -164,7 +164,7 @@ void Ising::MonteCarlo(int mcs, bool d) {
 
         average[0] += E;
         Eave(cycles - 1) = average[0]*norm;
-        average[1] += M;
+        average[1] += fabs(M);
         Mave(cycles - 1) = average[1]*norm;
 
 
