@@ -41,6 +41,7 @@ Running program:
         d
         e
         f
+        f2 (Parallel f)
     -n:
         Lattice size
     -mcs:
