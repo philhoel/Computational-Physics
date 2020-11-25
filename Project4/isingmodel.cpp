@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <armadillo>
+#include <mpi.h>
 
 #include <time.h>
 
@@ -18,6 +19,8 @@ Ising::Ising(int N, double temp, bool r) {
     j = 1;
     T = temp;
     ran = r;
+    acpt_count = 0;
+
 
     for (int de = -8; de <= 8; de++) {
         w[de+8] = 0;
@@ -123,12 +126,12 @@ void Ising::Metropolis() {
         Grid(iy, PBC(ix, n, 1))+
 
         Grid(PBC(iy, n, 1), ix));
-
-        if (g <= w[dE+8]) {
+        if ((double) rand()/RAND_MAX <= w[dE+8]) {
             Grid(iy,ix) *= -1;
             M += 2*Grid(iy, ix);
             E += dE;
             acpt_count++;
+            //count_de.push_back(dE);
         }
     
     }
@@ -137,26 +140,28 @@ void Ising::Metropolis() {
 // Runs the Monte Carlo cycles with the
 // metropolis function inside
 void Ising::MonteCarlo(int mcs) {
-
+    double norm = 1./mcs;
     for (int cycles = 1; cycles <= mcs; cycles++) {
         Metropolis();
 
         average[0] += E;
         average[1] += E*E;
         average[2] += M;
-        average[3] += M*M;
+        average[3] += M*M;      
         average[4] += fabs(M);
     }
 }
 
+//brukes for oppgave d
 void Ising::MonteCarlo(int mcs, bool d) {
 
     Eave = zeros<vec> (mcs);
     Mave = zeros<vec> (mcs);
     accept = zeros<vec> (mcs);
     double norm;
-    bool firsttime = true;
     double tol = 1e-2;
+    bool firsttime = true;
+    num_E = 0;
 
     for (int cycles = 1; cycles <= mcs; cycles++) {
         Metropolis();
@@ -186,7 +191,60 @@ void Ising::MonteCarlo(int mcs, bool d) {
                 }
             }
         }
+        
 
     }
 
+}
+
+void Ising::MonteCarloMPI(int mcs, int team) 
+{
+    int num_threads, my_rank;
+    
+    
+    team = MPI_Comm_size (MPI_COMM_WORLD, &num_threads);
+    team = MPI_Comm_rank (MPI_COMM_WORLD, &my_rank);
+
+    //cout << "my rank " << my_rank << endl;
+
+    int no_intervalls = mcs/num_threads;
+    int my_begin = my_rank*no_intervalls + 1;
+    int my_end = (my_rank+1)*no_intervalls;
+    if ( (my_rank == num_threads-1) &&( my_end < mcs) ) my_end = mcs;
+
+    double norm = 1.0/mcs;
+    double tmp_average[5];
+
+    team = MPI_Bcast (&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    team = MPI_Bcast (&tmp_average, 5, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+    for (int cycles = my_begin; cycles <= my_end; cycles++) 
+    {
+        Metropolis();
+        
+        tmp_average[0] += E;
+        tmp_average[1] += E*E;
+        tmp_average[2] += M;
+        tmp_average[3] += M*M;      
+        tmp_average[4] += fabs(M);
+
+    }
+
+    for(int i = 0; i < 5; i++)
+    {
+        //cout << "my_rank = " << my_rank << "tmpave = " << tmp_average[i] << endl;
+        team = MPI_Reduce(&tmp_average[i], &average[i], 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    }
+    /*
+    if(my_rank==0)
+    {
+        average[0] = average[0]*norm;
+        average[1] = average[1]*norm;
+        average[2] = average[2]*norm;
+        average[3] = average[3]*norm;      
+        average[4] = average[4]*norm;
+        //cout << "average = " << average[0] << endl; 
+    }
+    */
+    
 }

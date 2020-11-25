@@ -21,12 +21,9 @@ int main(int argc, char *argv[]) {
 
         clock_t begin = clock();
 
-        //Ising model(n, low);
-        //Ising model2(n, high);
         Ising model3(n, low);
         Ising model4(n, high);
-        //model.MonteCarlo(mcs, true);
-        //model2.MonteCarlo(mcs, true);
+ 
         model3.MonteCarlo(mcs, true);
         model4.MonteCarlo(mcs, true);
 

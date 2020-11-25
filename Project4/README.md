@@ -5,10 +5,13 @@
 This is the code for simulation of phase transition through the ising model
 
 Code:
+
     - C++
+    
     - Python
 
 Packages:
+
     - armadillo
     - mpi
     - numpy
@@ -16,9 +19,11 @@ Packages:
     - pandas
 
 Classes:
+
     isingmodel - All methods regarding the ising model
 
 Python scrips:
+
     run.py - To run different assignments
     read_c.py - Problem c
     read_d.py - Problem d
@@ -36,6 +41,7 @@ Running program:
         d
         e
         f
+        f2 (Parallel f)
     -n:
         Lattice size
     -mcs:
