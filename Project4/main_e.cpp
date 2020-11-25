@@ -84,6 +84,8 @@ void WriteMCToFile(Ising& obj3, Ising& obj4, string filename, int mcs, int n) {
         }
 
     }
+
+    myfile.close();
     
 
 }

@@ -171,7 +171,7 @@ void Ising::MonteCarlo(int mcs, bool d) {
         accept(cycles - 1) = acpt_count;
         //acpt_count = 0;
 
-        if(cycles > 1000)
+        if(cycles > 10000)
         {
             if( fabs(Eave(cycles-1)-Eave(cycles-2)) < tol )
             {

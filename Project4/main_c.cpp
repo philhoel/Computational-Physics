@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
     vec.push_back(Cv);
     vec.push_back(X);
     vec.push_back(temperature);
+    vec.push_back(acc);
     
 
     WriteToFile(vec, counter, file, n, norm);
