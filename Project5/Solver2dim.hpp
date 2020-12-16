@@ -16,25 +16,17 @@ class Solver {
 
         int n, time; // Iteration points
 
-        double dt, dx, alpha;
+        double dt, h, hh, alpha;
 
         mat u;
 
-        vec testVector;
-
         Solver(int N, int T, double DT);
-
-        Solver(int N, int T, double DT, vec B, vec A, vec V);
 
         double g(double x);
 
         void ForwardStep(int t);
 
         void Tridiag(int t);
-
-        void ForwardEuler();
-
-        void BackwardEuler();
 
         void CrankNicholson();
 
