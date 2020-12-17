@@ -26,9 +26,9 @@ int main() {
     //obj3.CrankNicholson();
     //obj3.WriteToFile("CN.csv");
 
-    Solver2dim obj2D(200, 1000, 0.00001);
-    obj2D.ExplicitScheme();
-    //obj2D.ForwardEuler(10, 100, 500, 999);
+    Solver2dim obj2D(200, 10E6, 10E-11);
+    //obj2D.ExplicitScheme();
+    obj2D.ForwardEuler(100, 1000, 10000, 100000);
     obj2D.WriteToMultipleFiles("2DEuler_50.csv", "2DEuler_100.csv", "2DEuler_500.csv", "2DEuler_999.csv");
 
 

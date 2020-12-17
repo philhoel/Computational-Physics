@@ -23,13 +23,9 @@ class Solver2dim {
         mat temp;
         mat w;
 
-        vector<mat> time_array;
-
         vector<mat> values;
 
         Solver2dim(int N, int T, double DT);
-
-        void ExplicitScheme();
 
         void ForwardStep();
 

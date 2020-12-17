@@ -27,66 +27,43 @@ Solver2dim::Solver2dim(int N, int T, double DT) {
 
     cout << h << endl;
 
-    alpha = dt/pow(h,2);
+    alpha = dt/pow(h,4);
 
     cout << alpha << endl;
 
     for (int x = 1; x < n+1; x++) {
         for (int y = n/2; y < n+1; y++) {
-            u(x,y) = 1;
+            v(x,y) = 1;
         }
-    }
-
-    for (int i = 0; i < n+1; i++) {
-            u(0,i) = 0;
-            u(i,0) = 0;
-            u(n+1,i) = 0;
-            u(i,n+1) = 0;
-        }
-
-    for (int t = 0; t < time; t++) {
-
-        time_array[t] = u;
     }
 
 }
 
-void Solver2dim::ExplicitScheme() {
 
-    for (int t = 0; t < time-1; t++) {
-        for (int x = 1; x < n+1; x++) {
-            for (int y = 1; y < n+1; y++) {
-                time_array[t+1](x,y) = time_array[t](x,y) + alpha*(
-                    time_array[t](x+1,y) - 4*time_array[t](x,y) + time_array[t](x-1,y)
-                    + time_array[t](x,y+1) + time_array[t](x,y-1)
-                );
-            }
-        }
-    }
-}
-
-/*
 void Solver2dim::ForwardStep() {
 
     for (int x = 1; x < n+1; x++) {
         for (int y = 1; y < n+1; y++) {
             u(x,y) = v(x,y) + alpha*(v(x+1,y) - 4*v(x,y) + v(x-1,y) + v(x,y+1) + v(x,y-1));
-            cout << u(x,y) << ", ";
+
         }
-        cout << endl;
+
     }
 
-    cout << "\n" << "\n" << endl;
 
-    temp = u;
-    u = v;
-    v = temp;
+    for (int x = 1; x < n+1; x++) {
+        for (int y = 1; y < n+1; y++) {
+            temp(x,y) = u(x,y);
+            u(x,y) = v(x,y);
+            v(x,y) = temp(x,y);
+        }
+    }
 
 }
 
 void Solver2dim::ForwardEuler(int t1, int t2, int t3, int t4) {
 
-    for (int i = 0; i < n+1; i++) {
+    for (int i = 0; i < n+2; i++) {
         v(0,i) = 0;
         v(i,0) = 0;
         v(n+1,i) = 0;
@@ -104,7 +81,7 @@ void Solver2dim::ForwardEuler(int t1, int t2, int t3, int t4) {
 
 }
 
-*/
+
 
 void Solver2dim::WriteToFile(string Filename, int k) {
 
@@ -112,11 +89,11 @@ void Solver2dim::WriteToFile(string Filename, int k) {
     MyFile.open(Filename);
     for (int x = 0; x < n+2; x++) {
         for (int y = 0; y < n+1; y++) {
-            MyFile << time_array[k](x,y);
+            MyFile << values[k](x,y);
             MyFile << ",";
         }
 
-        MyFile << time_array[k](x,n-1);
+        MyFile << values[k](x,n-1);
         MyFile << endl;
     }
 
@@ -125,8 +102,8 @@ void Solver2dim::WriteToFile(string Filename, int k) {
 
 void Solver2dim::WriteToMultipleFiles(string file1, string file2, string file3, string file4) {
 
-    WriteToFile(file1, 10);
-    WriteToFile(file2, 100);
-    WriteToFile(file3, 500);
-    WriteToFile(file4, 999);
+    WriteToFile(file1, 0);
+    WriteToFile(file2, 1);
+    WriteToFile(file3, 2);
+    WriteToFile(file4, 3);
 }
