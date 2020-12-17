@@ -29,27 +29,7 @@ Solver::Solver(int N, int T, double DT) {
     }
     
 }
-/*
-Solver::Solver(int N, int T, double DT, vec B, vec A, vec V) {
 
-    n = N;
-    time = T;
-    dt = DT;
-
-    b = B;
-    a = A;
-    u = zeros<mat>(n,time);
-    
-    for (int i = 1; i < n; i++) {
-        u(i,0) = V(i);
-    }
-
-}
-*/
-
-double Solver::g(double x) {
-    return sin(PI*x);
-}
 
 void Solver::ForwardStep(int t) {
     for (int x = 1; x < n; x++) {
@@ -163,5 +143,7 @@ void Solver::WriteToFile(string Filename) {
         myFile << u(x,time-1);
         myFile << endl;
     }
+
+    myFile.close();
 
 }

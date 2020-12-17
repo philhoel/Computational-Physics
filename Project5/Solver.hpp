@@ -24,10 +24,6 @@ class Solver {
 
         Solver(int N, int T, double DT);
 
-        Solver(int N, int T, double DT, vec B, vec A, vec V);
-
-        double g(double x);
-
         void ForwardStep(int t);
 
         void Tridiag(int t);

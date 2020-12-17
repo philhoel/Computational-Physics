@@ -8,7 +8,7 @@
 using namespace std;
 using namespace arma;
 
-class Solver {
+class Solver2dim {
 
     public:
 
@@ -16,19 +16,26 @@ class Solver {
 
         int n, time; // Iteration points
 
-        double dt, h, hh, alpha;
+        double dt, h, hh, alpha, dx;
 
-        mat u;
+        mat u, v;
 
-        Solver(int N, int T, double DT);
+        mat temp;
+        mat w;
 
-        double g(double x);
+        vector<mat> time_array;
 
-        void ForwardStep(int t);
+        vector<mat> values;
 
-        void Tridiag(int t);
+        Solver2dim(int N, int T, double DT);
 
-        void CrankNicholson();
+        void ExplicitScheme();
 
-        void WriteToFile(string Filename);
+        void ForwardStep();
+
+        void ForwardEuler(int t1, int t2, int t3, int t4);
+
+        void WriteToFile(string Filename, int k);
+
+        void WriteToMultipleFiles(string file1, string file2, string file3, string file4);
 };
