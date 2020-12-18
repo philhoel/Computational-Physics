@@ -22,7 +22,7 @@ if args.Default == True:
         print("Compiling...")
         os.system("g++ -std=c++11 main.cpp Solver.cpp Solver2dim.cpp -o main -larmadillo -llapack -lblas -O3")
         print("Executing...")
-        os.system("./main 1 200000 100 0.001")
+        os.system("./main 1 100000 100 0.001")
         print("Plotting...")
         os.system("python3 read1D.py ForwardEuler FE.csv")
         os.system("python3 read1D.py BackwardEuler BE.csv")
@@ -34,9 +34,9 @@ if args.Default == True:
         print("Compiling...")
         os.system("g++ -std=c++11 main.cpp Solver.cpp Solver2dim.cpp -o main -larmadillo -llapack -lblas -O3")
         print("Executing...")
-        os.system("./main 2 200000 100 0.001")
+        os.system("./main 2 2000 1000 0.001")
         print("Plotting...")
-        os.system("python3 readError.py FE.csv BE.csv CN.csv anal.csv")
+        os.system("python3 readError.py FE.csv BE.csv CN.csv anal.csv anal2.csv")
 
     # Running 2D
     elif args.Problem == 3:
@@ -71,12 +71,6 @@ else:
     print("Choose dt:")
     dt = input()
 
-    print("Choose boundary conditions:")
-    up = input("up: ")
-    down = input("down: ")
-    right = input("right: ")
-    left = input("left: ")
-
     if args.Problem == 1:
 
         print("Compiling...")
@@ -95,7 +89,7 @@ else:
         print("Executing...")
         os.system(f"./main 2 {n} {t} {dt}")
         print("Plotting...")
-        os.system("python3 readError.py FE.csv BE.csv CN.csv anal.csv")
+        os.system("python3 readError.py FE.csv BE.csv CN.csv anal.csv anal2.csv")
 
     elif args.Problem == 3:
 

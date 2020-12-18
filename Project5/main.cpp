@@ -39,9 +39,11 @@ int main(int argc, char * argv[]) {
 
     } else if (problem == 2) {
 
-        Solver obj(n, time, dt);
+        Solver obj(200, 1000, 0.00001);
         obj.ForwardEuler();
+        obj.AnalyticExpression();
         obj.WriteToFile("FE.csv");
+        obj.WriteToFile("anal.csv", true);
 
         Solver obj2(n, time, dt);
         obj2.BackwardEuler();
@@ -53,7 +55,7 @@ int main(int argc, char * argv[]) {
 
         Solver obj4(n, time, dt);
         obj4.AnalyticExpression();
-        obj4.WriteToFile("anal.csv", true);
+        obj4.WriteToFile("anal2.csv", true);
 
     } else if (problem == 3) {
 
@@ -74,21 +76,21 @@ int main(int argc, char * argv[]) {
             obj.ForwardEuler();
             finish = clock();
 
-            runtime[i][1] = (double)(finish - start)/(CLOCKS_PER_SEC);
+            runtime[i][0] = (double)(finish - start)/(CLOCKS_PER_SEC);
 
             Solver obj2(n, time, dt);
             start = clock();
             obj2.BackwardEuler();
             finish = clock();
 
-            runtime[i][2] = (double)(finish - start)/(CLOCKS_PER_SEC);
+            runtime[i][1] = (double)(finish - start)/(CLOCKS_PER_SEC);
 
             Solver obj3(n, time, dt);
             start = clock();
             obj3.CrankNicholson();
             finish = clock();
 
-            runtime[i][3] = (double)(finish - start)/(CLOCKS_PER_SEC);
+            runtime[i][2] = (double)(finish - start)/(CLOCKS_PER_SEC);
 
         }
 

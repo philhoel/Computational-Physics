@@ -16,11 +16,14 @@ class Solver {
 
         int n, time; // Iteration points
 
+        vec t_steps;
+
         double dt, dx, alpha;
 
         mat u;
 
         mat u_a;
+        //vec u_a;
 
         vec A;
 

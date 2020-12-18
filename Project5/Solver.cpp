@@ -15,11 +15,13 @@ Solver::Solver(int N, int T, double DT) {
 
     n = N;
     time = T;
+    t_steps = linspace(0,1,T);
     dt = DT;
 
     u = zeros<mat>(n+2, time);
     u_a = zeros<mat>(n+2, time);
-    vec A = zeros<vec>(n+2);
+    //u_a = zeros<vec>(n+2);
+    A = zeros<vec>(n+2);
     x = linspace(0,1,n+2);
     dx = x(1) - x(0);
 
@@ -29,6 +31,8 @@ Solver::Solver(int N, int T, double DT) {
     for (int i = 1; i < n; i++) {
         u(i,0) = 0;
     }
+
+    //cout << exp(-4.45e2) << endl;
     
 }
 
@@ -36,19 +40,37 @@ void Solver::AnalyticExpression() {
 
     double sum = 0;
     for (int i = 1; i < n+1; i++) {
-        A(i) = (2*(PI*i*cos(PI*n) - sin(PI*n)))/(PI*PI*n*n);
+        A(i) = (2*(PI*i*cos(PI*i) - sin(PI*i)))/(PI*PI*i*i);
+        //cout << A(i) << endl;
     }
-
+    
     for (int t = 1; t < time; t++) {
         for (int j = 1; j < n+1; j++) {
             for (int i = 1; i < n+1; i++) {
-                sum += A(i)*exp(-pow(PI*n,2)*t)*sin(n*PI*x(j));
+                sum += A(i)*exp(-pow(PI*i,2)*t_steps(t))*sin(i*PI*x(j));
+                //cout << exp(-pow(PI*i,2)*t) << endl;
             }
 
-            u(j,t) = x(j) + sum;
+            u_a(j,t) = x(j) + sum;
             sum = 0;
         }
     }
+    
+
+   //double t = 0.1;
+
+   /*
+
+    for (int j = 1; j < n+1; j++) {
+            for (int i = 1; i < n+1; i++) {
+                sum += A(i)*exp(-pow(PI*i,2)*t)*sin(i*PI*x(j));
+                cout << exp(-pow(PI*i,2)*t) << endl;
+            }
+
+            u_a(j) = x(j) + sum;
+            sum = 0;
+
+    */
 }
 
 
