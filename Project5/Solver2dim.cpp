@@ -24,16 +24,13 @@ Solver2dim::Solver2dim(int N, int T, double DT) {
     w = zeros<mat>(n+2, n+2);
     h = 1./(n+1);
 
-
-    cout << h << endl;
+    int z = 1;
 
     alpha = dt/pow(h,4);
 
-    cout << alpha << endl;
-
     for (int x = 1; x < n+1; x++) {
         for (int y = n/2; y < n+1; y++) {
-            v(x,y) = 1;
+            v(x,y) = z;
         }
     }
 

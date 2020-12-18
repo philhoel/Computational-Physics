@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 import pandas as pd
 import os
 import sys
 
-filename = sys.argv[1]
+method = sys.argv[1]
+filename = sys.argv[2]
 
 PDE = pd.read_csv(filename)
 xsize, tsize = PDE.shape
@@ -15,5 +15,9 @@ tt, xx = np.meshgrid(t,x)
 
 
 plt.pcolormesh(xx, tt, PDE, cmap="hot")
+plt.title(f"Colormesh for {method} Method")
+plt.ylabel("Time")
+plt.xlabel("Length of rod")
 plt.colorbar()
+plt.savefig("Burning1D.png")
 plt.show()

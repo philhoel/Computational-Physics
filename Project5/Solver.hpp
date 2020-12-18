@@ -20,9 +20,15 @@ class Solver {
 
         mat u;
 
-        vec testVector;
+        mat u_a;
+
+        vec A;
+
+        vec x;
 
         Solver(int N, int T, double DT);
+
+        void AnalyticExpression();
 
         void ForwardStep(int t);
 
@@ -35,4 +41,6 @@ class Solver {
         void CrankNicholson();
 
         void WriteToFile(string Filename);
+
+        void WriteToFile(string Filename, bool analytic);
 };

@@ -18,7 +18,9 @@ Solver::Solver(int N, int T, double DT) {
     dt = DT;
 
     u = zeros<mat>(n+2, time);
-    vec x = linspace(0,1,n+2);
+    u_a = zeros<mat>(n+2, time);
+    vec A = zeros<vec>(n+2);
+    x = linspace(0,1,n+2);
     dx = x(1) - x(0);
 
     alpha = dt/pow(dx,2);
@@ -28,6 +30,25 @@ Solver::Solver(int N, int T, double DT) {
         u(i,0) = 0;
     }
     
+}
+
+void Solver::AnalyticExpression() {
+
+    double sum = 0;
+    for (int i = 1; i < n+1; i++) {
+        A(i) = (2*(PI*i*cos(PI*n) - sin(PI*n)))/(PI*PI*n*n);
+    }
+
+    for (int t = 1; t < time; t++) {
+        for (int j = 1; j < n+1; j++) {
+            for (int i = 1; i < n+1; i++) {
+                sum += A(i)*exp(-pow(PI*n,2)*t)*sin(n*PI*x(j));
+            }
+
+            u(j,t) = x(j) + sum;
+            sum = 0;
+        }
+    }
 }
 
 
@@ -67,28 +88,7 @@ void Solver::Tridiag(int t) {
     for (int x = n; x > 1; x--) {
         u(x-1,t) -= u(x,t)*a(x-2);
     }
-    
-    
-   /*
-    
-    
-    // Forward substitution
-            for (int x = 1; x < n-1; x++) {
-                //cout << "u" << u(x,t-1) << endl;
-                b(x) = b(x) - (a(x)*a(x-1)/b(x-1));
-                u(x,t-1) = u(x,t-1) - (a(x-1)*u(x-1,t-1)/b(x-1));
-            }
 
-            // Backward substitution
-            cout << u(n-1,t) << endl;
-            u(n-1,t) = u(n-1,t-1)/b(n-1);
-            //cout << u(1,t) << endl;
-            for (int x = n-2; x > 0; x--) {
-                u(x,t) = (u(x,t-1) - a(x)*u(x+1,t))/b(x);
-                cout << u(x,t) << endl;
-            }
-
-    */
 
 }
 
@@ -146,4 +146,21 @@ void Solver::WriteToFile(string Filename) {
 
     myFile.close();
 
+}
+
+void Solver::WriteToFile(string Filename, bool analytic) {
+
+    ofstream myFile;
+    myFile.open(Filename);
+    for (int x = 0; x < n; x++) {
+        for (int t = 0; t < time-1; t++) {
+            myFile << u_a(x,t);
+            myFile << ",";
+        }
+
+        myFile << u(x,time-1);
+        myFile << endl;
+    }
+
+    myFile.close();
 }
