@@ -98,8 +98,8 @@ int main(int argc, char * argv[]) {
         FE_sum = BE_sum = CN_sum = 0;
 
         for (int i = 0; i < 100; i++) {
-            FE_sum += runtime[i][1]/100;
-            BE_sum += runtime[i][2]/100;
+            FE_sum += runtime[i][0]/100;
+            BE_sum += runtime[i][1]/100;
             CN_sum += runtime[i][2]/100;
         }
 

@@ -32,4 +32,16 @@ Python scrips:
 
 Running program:
 
-    
+    python3 run.py Problem Default
+
+    Problem:
+        1 - 1D contour plot
+        2 - 1D Error
+        3 - 2D contour plot
+        4  Runtime
+
+    Default:
+        True - Runs default values
+        False - Asks for different values
+
+
